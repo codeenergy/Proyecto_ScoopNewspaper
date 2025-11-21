@@ -10,7 +10,7 @@ import { PartnerSidebar } from './components/PartnerSidebar';
 import { fetchNews } from './services/geminiService';
 import { FilterState, NewsState } from './types';
 import { REFRESH_INTERVAL_MS } from './constants';
-import { AnimatePresence } from 'framer-motion';
+//import { AnimatePresence } from 'framer-motion';
 
 const App: React.FC = () => {
   const [newsState, setNewsState] = useState<NewsState>({
