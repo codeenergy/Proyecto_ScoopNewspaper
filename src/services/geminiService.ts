@@ -14,10 +14,13 @@ const languageMap: Record<string, string> = {
 // Get language name for Gemini prompts
 const languageNames: Record<string, string> = {
   'en': 'English',
-  'es': 'Spanish',
+  'es': 'Spanish (Spain/Latin America)',
   'fr': 'French',
   'ar': 'Arabic'
 };
+
+// Cache for translated articles to avoid re-translating
+const translationCache: Map<string, Article[]> = new Map();
 
 export async function fetchNews(
   category: Category | 'All',
@@ -26,42 +29,79 @@ export async function fetchNews(
   country: string = 'global'
 ): Promise<Article[]> {
   try {
+    // Check cache first for translations
+    const cacheKey = `${category}-${searchQuery}-${language}-${country}`;
+    if (translationCache.has(cacheKey)) {
+      console.log('Using cached articles');
+      return translationCache.get(cacheKey)!;
+    }
+
     // Intentar obtener noticias reales de NewsAPI
     const categoryParam = category === 'All' ? 'general' : category.toLowerCase();
     const countryParam = country === 'global' ? 'us' : country;
     const newsApiLang = languageMap[language] || 'en';
 
-    const baseUrl = searchQuery
-      ? `https://newsapi.org/v2/everything?q=${encodeURIComponent(searchQuery)}&language=${newsApiLang}&sortBy=publishedAt&pageSize=50`
-      : `https://newsapi.org/v2/top-headlines?category=${categoryParam}&country=${countryParam}&pageSize=50`;
+    // Fetch from multiple endpoints to get more content
+    const endpoints = [
+      searchQuery
+        ? `https://newsapi.org/v2/everything?q=${encodeURIComponent(searchQuery)}&language=${newsApiLang}&sortBy=publishedAt&pageSize=100`
+        : `https://newsapi.org/v2/top-headlines?category=${categoryParam}&country=${countryParam}&pageSize=100`,
+    ];
 
-    const response = await fetch(`${baseUrl}&apiKey=${NEWS_API_KEY}`);
+    // Add additional categories if 'All' to get more diverse content
+    if (category === 'All' && !searchQuery) {
+      const additionalCategories = ['technology', 'business', 'science', 'sports', 'entertainment', 'health'];
+      additionalCategories.forEach(cat => {
+        endpoints.push(`https://newsapi.org/v2/top-headlines?category=${cat}&country=${countryParam}&pageSize=20`);
+      });
+    }
 
-    if (response.ok) {
-      const data = await response.json();
+    let allArticles: any[] = [];
 
-      if (data.articles && data.articles.length > 0) {
-        // Obtener hasta 30 artículos
-        const newsArticles = data.articles.slice(0, 60).map((item: any, index: number) => ({
-          headline: item.title || 'Sin título',
-          subheadline: item.description || '',
-          author: item.author || 'Redacción',
-          date: item.publishedAt ? new Date(item.publishedAt).toLocaleDateString() : new Date().toLocaleDateString(),
-          content: item.content || item.description || 'Contenido no disponible.',
-          summary: item.description || '',
-          imageUrl: item.urlToImage || `https://picsum.photos/seed/${index}/800/600`,
-          category: category === 'All' ? getCategoryFromSource(item.source?.name) : category,
-          location: item.source?.name || 'Internacional'
-        }));
-
-        // Si el idioma no es inglés, traducir con Gemini
-        if (language !== 'en') {
-          console.log(`Traduciendo ${newsArticles.length} artículos a ${languageNames[language]}...`);
-          return await translateArticlesWithGemini(newsArticles, language);
+    for (const endpoint of endpoints) {
+      try {
+        const response = await fetch(`${endpoint}&apiKey=${NEWS_API_KEY}`);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.articles) {
+            allArticles = [...allArticles, ...data.articles];
+          }
         }
-
-        return newsArticles;
+      } catch (e) {
+        console.log('Endpoint failed:', endpoint);
       }
+    }
+
+    // Remove duplicates by title
+    const uniqueArticles = allArticles.filter((article, index, self) =>
+      index === self.findIndex((a) => a.title === article.title)
+    );
+
+    if (uniqueArticles.length > 0) {
+      // Map to our format - get up to 80 articles
+      const newsArticles = uniqueArticles.slice(0, 80).map((item: any, index: number) => ({
+        headline: item.title || 'No title',
+        subheadline: item.description || '',
+        author: item.author || 'Editorial',
+        date: item.publishedAt ? new Date(item.publishedAt).toLocaleDateString() : new Date().toLocaleDateString(),
+        content: item.content || item.description || 'Content not available.',
+        summary: item.description || '',
+        imageUrl: item.urlToImage || `https://picsum.photos/seed/news-${index}/800/600`,
+        category: category === 'All' ? getCategoryFromSource(item.source?.name) : category,
+        location: item.source?.name || 'International'
+      }));
+
+      // Si el idioma no es inglés, traducir con Gemini
+      if (language !== 'en') {
+        console.log(`Traduciendo ${newsArticles.length} artículos a ${languageNames[language]}...`);
+        const translated = await translateArticlesWithGemini(newsArticles, language);
+        translationCache.set(cacheKey, translated);
+        // Clear cache after 5 minutes
+        setTimeout(() => translationCache.delete(cacheKey), 5 * 60 * 1000);
+        return translated;
+      }
+
+      return newsArticles;
     }
 
     // Si NewsAPI falla, usar Gemini para generar noticias
@@ -80,68 +120,97 @@ async function translateArticlesWithGemini(articles: Article[], language: string
   try {
     const languageName = languageNames[language] || 'English';
 
-    // Traducir en lotes de 10 artículos para no exceder límites
-    const batchSize = 10;
+    // Traducir en lotes de 5 artículos para mejor calidad
+    const batchSize = 5;
     const translatedArticles: Article[] = [];
 
     for (let i = 0; i < articles.length; i += batchSize) {
       const batch = articles.slice(i, i + batchSize);
 
-      const prompt = `Translate these news articles to ${languageName}. Keep the same structure and return ONLY a JSON array:
-${JSON.stringify(batch.map(a => ({
-  headline: a.headline,
-  subheadline: a.subheadline,
-  content: a.content,
-  summary: a.summary
-})))}
+      const articlesToTranslate = batch.map((a, idx) => ({
+        id: idx,
+        headline: a.headline,
+        subheadline: a.subheadline,
+        content: a.content?.substring(0, 500), // Limit content length
+        summary: a.summary
+      }));
 
-Return the translated articles in the exact same JSON array format.`;
+      const prompt = `You are a professional news translator. Translate these ${batch.length} news articles to ${languageName}.
+IMPORTANT:
+- Translate ALL text naturally and professionally
+- Keep news terminology appropriate for the target language
+- Return ONLY a valid JSON array, no explanations
+- Each object must have: id, headline, subheadline, content, summary
 
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: {
-              temperature: 0.3,
-              maxOutputTokens: 4096,
-            }
-          })
-        }
-      );
+Articles to translate:
+${JSON.stringify(articlesToTranslate, null, 2)}
 
-      if (response.ok) {
-        const data = await response.json();
-        const textContent = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+Return the translated JSON array:`;
 
-        const jsonMatch = textContent.match(/\[[\s\S]*\]/);
-        if (jsonMatch) {
-          const translated = JSON.parse(jsonMatch[0]);
+      try {
+        const response = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: prompt }] }],
+              generationConfig: {
+                temperature: 0.2,
+                maxOutputTokens: 8192,
+              }
+            })
+          }
+        );
 
-          // Combinar traducciones con datos originales
-          batch.forEach((original, index) => {
-            if (translated[index]) {
-              translatedArticles.push({
-                ...original,
-                headline: translated[index].headline || original.headline,
-                subheadline: translated[index].subheadline || original.subheadline,
-                content: translated[index].content || original.content,
-                summary: translated[index].summary || original.summary
+        if (response.ok) {
+          const data = await response.json();
+          const textContent = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+          // Try to extract JSON
+          const jsonMatch = textContent.match(/\[[\s\S]*?\]/);
+          if (jsonMatch) {
+            try {
+              const translated = JSON.parse(jsonMatch[0]);
+
+              // Combinar traducciones con datos originales
+              batch.forEach((original, index) => {
+                const translatedItem = translated.find((t: any) => t.id === index) || translated[index];
+                if (translatedItem) {
+                  translatedArticles.push({
+                    ...original,
+                    headline: translatedItem.headline || original.headline,
+                    subheadline: translatedItem.subheadline || original.subheadline,
+                    content: translatedItem.content || original.content,
+                    summary: translatedItem.summary || original.summary
+                  });
+                } else {
+                  translatedArticles.push(original);
+                }
               });
-            } else {
-              translatedArticles.push(original);
+            } catch (parseError) {
+              console.log('JSON parse error, using originals for batch');
+              translatedArticles.push(...batch);
             }
-          });
+          } else {
+            translatedArticles.push(...batch);
+          }
         } else {
+          console.log('Translation API error, using originals for batch');
           translatedArticles.push(...batch);
         }
-      } else {
+      } catch (fetchError) {
+        console.log('Translation fetch error:', fetchError);
         translatedArticles.push(...batch);
+      }
+
+      // Small delay between batches to avoid rate limits
+      if (i + batchSize < articles.length) {
+        await new Promise(resolve => setTimeout(resolve, 200));
       }
     }
 
+    console.log(`Successfully processed ${translatedArticles.length} articles`);
     return translatedArticles;
 
   } catch (error) {
@@ -154,60 +223,181 @@ async function generateNewsWithGemini(category: Category | 'All', language: stri
   try {
     const languageName = languageNames[language] || 'English';
     const countryContext = country !== 'global' ? `Focus on news relevant to ${country}.` : '';
+    const today = new Date().toISOString().split('T')[0];
 
-    const prompt = `Generate 20 realistic and current news articles in ${languageName} for the category: ${category}. ${countryContext}
-    Return a JSON array with this exact structure:
-    [{
-      "headline": "Article headline",
-      "subheadline": "Brief description",
-      "author": "Author name",
-      "date": "2024-11-19",
-      "content": "Full article content (2-3 paragraphs)",
-      "summary": "Brief summary in casual tone",
-      "category": "${category === 'All' ? 'World' : category}",
-      "location": "City name"
-    }]
+    const categories = category === 'All'
+      ? ['World', 'Technology', 'Business', 'Science', 'Sports', 'Arts', 'Health']
+      : [category];
 
-    Make them current (today's date: ${new Date().toISOString().split('T')[0]}), realistic, diverse topics, and engaging. No fictional or fantasy content.`;
+    const allArticles: Article[] = [];
 
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: {
-            temperature: 0.7,
-            maxOutputTokens: 4096,
+    for (const cat of categories) {
+      const prompt = `Generate ${category === 'All' ? 5 : 15} realistic news articles in ${languageName} for ${cat} news. ${countryContext}
+
+Return ONLY a JSON array:
+[{
+  "headline": "Compelling headline",
+  "subheadline": "Brief engaging description",
+  "author": "Reporter Name",
+  "date": "${today}",
+  "content": "Full article with 2-3 detailed paragraphs about current events",
+  "summary": "TL;DR summary",
+  "category": "${cat}",
+  "location": "City, Country"
+}]
+
+Requirements:
+- Current events style (date: ${today})
+- Professional journalism tone
+- Diverse topics within ${cat}
+- No fictional/fantasy content`;
+
+      try {
+        const response = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: prompt }] }],
+              generationConfig: {
+                temperature: 0.8,
+                maxOutputTokens: 8192,
+              }
+            })
           }
-        })
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          const textContent = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+          const jsonMatch = textContent.match(/\[[\s\S]*?\]/);
+          if (jsonMatch) {
+            const articles = JSON.parse(jsonMatch[0]);
+            articles.forEach((article: any, index: number) => {
+              allArticles.push({
+                ...article,
+                imageUrl: `https://picsum.photos/seed/${cat}-${country}-${index}-${Date.now()}/800/600`
+              });
+            });
+          }
+        }
+      } catch (e) {
+        console.log(`Error generating ${cat} news:`, e);
       }
-    );
-
-    if (!response.ok) {
-      throw new Error('Gemini API error');
     }
 
-    const data = await response.json();
-    const textContent = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-
-    // Extraer JSON del texto
-    const jsonMatch = textContent.match(/\[[\s\S]*\]/);
-    if (jsonMatch) {
-      const articles = JSON.parse(jsonMatch[0]);
-      return articles.map((article: any, index: number) => ({
-        ...article,
-        imageUrl: `https://picsum.photos/seed/${category}-${country}-${index}/800/600`
-      }));
+    if (allArticles.length > 0) {
+      return allArticles;
     }
 
-    throw new Error('No valid JSON in response');
+    throw new Error('No articles generated');
 
   } catch (error) {
     console.error('Error generating with Gemini:', error);
-    return MOCK_ARTICLES.slice(0, 20);
+    // Return extended mock articles
+    return getExtendedMockArticles(language);
   }
+}
+
+// Extended mock articles for fallback
+function getExtendedMockArticles(_language: string): Article[] {
+  const baseArticles = [...MOCK_ARTICLES];
+
+  // Add more diverse mock articles
+  const additionalArticles: Article[] = [
+    {
+      headline: "Electric Vehicle Sales Surge Globally",
+      subheadline: "EV adoption accelerates as battery costs drop significantly",
+      author: "Michael Chen",
+      date: new Date().toLocaleDateString(),
+      content: "Global electric vehicle sales have increased by 40% this quarter, driven by falling battery prices and expanding charging infrastructure. Major automakers are ramping up production to meet unprecedented demand.",
+      summary: "EVs are taking over! Sales up 40% as batteries get cheaper.",
+      imageUrl: "https://picsum.photos/seed/ev-cars/800/600",
+      category: Category.TECH,
+      location: "Detroit"
+    },
+    {
+      headline: "World Health Organization Announces New Health Initiative",
+      subheadline: "Global program aims to improve healthcare access in developing nations",
+      author: "Dr. Lisa Park",
+      date: new Date().toLocaleDateString(),
+      content: "The WHO has launched a comprehensive health initiative targeting underserved communities worldwide. The $5 billion program will focus on preventive care, vaccination campaigns, and building sustainable healthcare infrastructure.",
+      summary: "WHO launches $5B program to bring healthcare to everyone.",
+      imageUrl: "https://picsum.photos/seed/health-who/800/600",
+      category: Category.SCIENCE,
+      location: "Geneva"
+    },
+    {
+      headline: "Tech Giants Report Strong Quarterly Earnings",
+      subheadline: "AI investments drive revenue growth across major companies",
+      author: "Sarah Williams",
+      date: new Date().toLocaleDateString(),
+      content: "Leading technology companies have reported better-than-expected earnings, with AI-related products and services driving significant revenue growth. Analysts predict continued momentum as enterprise adoption accelerates.",
+      summary: "Big Tech crushing it with AI! Earnings beat expectations.",
+      imageUrl: "https://picsum.photos/seed/tech-earnings/800/600",
+      category: Category.BUSINESS,
+      location: "Silicon Valley"
+    },
+    {
+      headline: "International Sports Federation Announces New Tournament",
+      subheadline: "Global competition to feature teams from 50 countries",
+      author: "James Rodriguez",
+      date: new Date().toLocaleDateString(),
+      content: "A new international sports tournament has been announced, bringing together athletes from 50 countries in a month-long competition. The event is expected to draw millions of viewers and boost tourism in host cities.",
+      summary: "Huge new global tournament coming! 50 countries competing.",
+      imageUrl: "https://picsum.photos/seed/sports-tournament/800/600",
+      category: Category.SPORTS,
+      location: "Paris"
+    },
+    {
+      headline: "Breakthrough in Renewable Energy Storage",
+      subheadline: "New battery technology promises week-long power storage",
+      author: "Dr. Emily Watson",
+      date: new Date().toLocaleDateString(),
+      content: "Scientists have developed a revolutionary battery technology capable of storing renewable energy for extended periods. This breakthrough could solve one of the biggest challenges in transitioning to clean energy sources.",
+      summary: "Game-changing battery tech could store power for a week!",
+      imageUrl: "https://picsum.photos/seed/battery-tech/800/600",
+      category: Category.SCIENCE,
+      location: "Boston"
+    },
+    {
+      headline: "Major Art Exhibition Opens to Record Crowds",
+      subheadline: "Immersive digital art experience draws global attention",
+      author: "Alexandra Stone",
+      date: new Date().toLocaleDateString(),
+      content: "A groundbreaking digital art exhibition has opened to unprecedented attendance, featuring interactive installations that blend traditional artistry with cutting-edge technology. Critics praise the innovative approach to experiencing art.",
+      summary: "Mind-blowing digital art show breaking attendance records!",
+      imageUrl: "https://picsum.photos/seed/digital-art/800/600",
+      category: Category.ARTS,
+      location: "Tokyo"
+    },
+    {
+      headline: "Global Trade Agreement Reaches Final Stage",
+      subheadline: "Economic pact expected to boost international commerce",
+      author: "Robert Chang",
+      date: new Date().toLocaleDateString(),
+      content: "Negotiations for a major international trade agreement have entered their final phase, with diplomats expressing optimism about reaching a comprehensive deal. The agreement could reshape global commerce patterns for decades.",
+      summary: "Massive trade deal almost done - could change everything.",
+      imageUrl: "https://picsum.photos/seed/trade-deal/800/600",
+      category: Category.BUSINESS,
+      location: "Brussels"
+    },
+    {
+      headline: "Space Agency Reveals Plans for Lunar Base",
+      subheadline: "Permanent moon settlement targeted for next decade",
+      author: "Dr. Neil Foster",
+      date: new Date().toLocaleDateString(),
+      content: "International space agencies have unveiled detailed plans for establishing a permanent human presence on the Moon. The ambitious project involves multiple nations and private companies working together on unprecedented scale.",
+      summary: "We're building a moon base! Multiple countries teaming up.",
+      imageUrl: "https://picsum.photos/seed/moon-base/800/600",
+      category: Category.SCIENCE,
+      location: "Houston"
+    }
+  ];
+
+  return [...baseArticles, ...additionalArticles];
 }
 
 function getCategoryFromSource(source?: string): string {
