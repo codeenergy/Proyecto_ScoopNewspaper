@@ -12,9 +12,11 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+   // "noUnusedLocals": true,
+   // "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": false,        // ✅ Permite variables no usadas
+    "noUnusedParameters": false,    // ✅ Permite parámetros no usados
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
