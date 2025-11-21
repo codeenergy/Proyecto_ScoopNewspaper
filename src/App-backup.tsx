@@ -129,9 +129,9 @@ const App: React.FC = () => {
       <Footer language={filterState.language} />
 
       {/* Floating Video Ad Overlay (Still kept for high impact ads) */}
-      <AnimatePresence>
+   {/* <AnimatePresence>
         {showAd && <VideoAd onClose={() => setShowAd(false)} />}
-      </AnimatePresence>
+     </AnimatePresence>*/}
 
     </div>
   );
