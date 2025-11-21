@@ -19,6 +19,25 @@ const languageNames: Record<string, string> = {
   'ar': 'Arabic'
 };
 
+// Premium news sources - top newspapers worldwide
+const PREMIUM_SOURCES = [
+  'bbc-news',
+  'the-new-york-times',
+  'the-guardian-uk',
+  'reuters',
+  'associated-press',
+  'bloomberg',
+  'the-washington-post',
+  'cnn',
+  'al-jazeera-english',
+  'the-wall-street-journal',
+  'financial-times',
+  'the-economist',
+  'time',
+  'abc-news',
+  'nbc-news'
+];
+
 // Cache for translated articles to avoid re-translating
 const translationCache: Map<string, Article[]> = new Map();
 
@@ -42,17 +61,23 @@ export async function fetchNews(
     const newsApiLang = languageMap[language] || 'en';
 
     // Fetch from multiple endpoints to get more content
-    const endpoints = [
-      searchQuery
-        ? `https://newsapi.org/v2/everything?q=${encodeURIComponent(searchQuery)}&language=${newsApiLang}&sortBy=publishedAt&pageSize=100`
-        : `https://newsapi.org/v2/top-headlines?category=${categoryParam}&country=${countryParam}&pageSize=100`,
-    ];
+    const endpoints: string[] = [];
 
-    // Add additional categories if 'All' to get more diverse content
+    // Priority 1: Premium sources (best newspapers)
+    endpoints.push(`https://newsapi.org/v2/top-headlines?sources=${PREMIUM_SOURCES.join(',')}&pageSize=100`);
+
+    // Priority 2: Category-specific or search
+    if (searchQuery) {
+      endpoints.push(`https://newsapi.org/v2/everything?q=${encodeURIComponent(searchQuery)}&language=${newsApiLang}&sortBy=publishedAt&pageSize=50`);
+    } else {
+      endpoints.push(`https://newsapi.org/v2/top-headlines?category=${categoryParam}&country=${countryParam}&pageSize=50`);
+    }
+
+    // Priority 3: Additional categories for diversity
     if (category === 'All' && !searchQuery) {
       const additionalCategories = ['technology', 'business', 'science', 'sports', 'entertainment', 'health'];
       additionalCategories.forEach(cat => {
-        endpoints.push(`https://newsapi.org/v2/top-headlines?category=${cat}&country=${countryParam}&pageSize=20`);
+        endpoints.push(`https://newsapi.org/v2/top-headlines?category=${cat}&country=${countryParam}&pageSize=15`);
       });
     }
 

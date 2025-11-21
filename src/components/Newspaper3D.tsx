@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, Loader } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Loader, X, Share2, Facebook, Twitter, Linkedin, Mail } from 'lucide-react';
 import { Article, Language } from '../types';
 import { TRANSLATIONS } from '../constants';
 
@@ -14,14 +14,29 @@ interface Newspaper3DProps {
 export const Newspaper3D: React.FC<Newspaper3DProps> = ({
   articles,
   isLoading,
-  category,
+  category: _category,
   onRefresh,
   language
 }) => {
   const [currentPage, setCurrentPage] = useState(0);
+  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const articlesPerPage = 2;
   const totalPages = Math.ceil(articles.length / articlesPerPage);
   const t = TRANSLATIONS[language];
+
+  const shareArticle = (article: Article, platform: string) => {
+    const url = encodeURIComponent(window.location.href);
+    const text = encodeURIComponent(article.headline);
+    const shareUrls: Record<string, string> = {
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${url}`,
+      twitter: `https://twitter.com/intent/tweet?text=${text}&url=${url}`,
+      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${url}`,
+      email: `mailto:?subject=${text}&body=${url}`
+    };
+    if (shareUrls[platform]) {
+      window.open(shareUrls[platform], '_blank', 'width=600,height=400');
+    }
+  };
 
   const nextPage = () => {
     if (currentPage < totalPages - 1) {
@@ -123,10 +138,18 @@ export const Newspaper3D: React.FC<Newspaper3DProps> = ({
                   )}
                 </div>
 
-                {/* Content */}
-                <p className="text-gray-800 leading-relaxed text-sm">
+                {/* Content Preview */}
+                <p className="text-gray-800 leading-relaxed text-sm line-clamp-4">
                   {article.content}
                 </p>
+
+                {/* Read More Button */}
+                <button
+                  onClick={() => setSelectedArticle(article)}
+                  className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm font-semibold self-start"
+                >
+                  {language === 'es' ? 'Leer más' : language === 'fr' ? 'Lire plus' : language === 'ar' ? 'اقرأ المزيد' : 'Read More'}
+                </button>
               </div>
             ))}
           </div>
@@ -156,6 +179,134 @@ export const Newspaper3D: React.FC<Newspaper3DProps> = ({
         >
           <ChevronRight className="w-6 h-6" />
         </button>
+      )}
+
+      {/* Article Modal */}
+      {selectedArticle && (
+        <div
+          className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
+          onClick={() => setSelectedArticle(null)}
+        >
+          <div
+            className="bg-gradient-to-br from-gray-900 to-black border border-white/20 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 border-b border-white/10 sticky top-0 bg-black/90 backdrop-blur z-10">
+              <h2 className="text-xl font-bold text-white">
+                {language === 'es' ? 'Artículo Completo' : language === 'fr' ? 'Article Complet' : language === 'ar' ? 'المقال الكامل' : 'Full Article'}
+              </h2>
+              <button
+                onClick={() => setSelectedArticle(null)}
+                className="text-gray-400 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-full"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Article Content */}
+            <div className="p-6">
+              {/* Image */}
+              <div className="w-full h-64 md:h-96 bg-gray-800 rounded-lg overflow-hidden mb-6">
+                <img
+                  src={selectedArticle.imageUrl}
+                  alt={selectedArticle.headline}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
+              {/* Category */}
+              <span className="inline-block px-3 py-1 bg-blue-500/20 text-blue-400 text-xs font-semibold rounded-full mb-4">
+                {selectedArticle.category}
+              </span>
+
+              {/* Headline */}
+              <h1 className="font-serif font-bold text-3xl md:text-4xl text-white mb-3">
+                {selectedArticle.headline}
+              </h1>
+
+              {/* Subheadline */}
+              <p className="text-gray-300 italic text-lg mb-4">
+                {selectedArticle.subheadline}
+              </p>
+
+              {/* Meta */}
+              <div className="flex items-center gap-3 text-sm text-gray-400 mb-6 pb-6 border-b border-white/10">
+                <span className="font-semibold">{selectedArticle.author}</span>
+                <span>•</span>
+                <span>{selectedArticle.date}</span>
+                {selectedArticle.location && (
+                  <>
+                    <span>•</span>
+                    <span>{selectedArticle.location}</span>
+                  </>
+                )}
+              </div>
+
+              {/* Content */}
+              <div className="text-gray-300 leading-relaxed text-base mb-6">
+                {selectedArticle.content}
+              </div>
+
+              {/* Summary */}
+              {selectedArticle.summary && (
+                <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg mb-6">
+                  <p className="text-sm text-blue-300 italic">
+                    {selectedArticle.summary}
+                  </p>
+                </div>
+              )}
+
+              {/* Share Section */}
+              <div className="border-t border-white/10 pt-6">
+                <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
+                  <Share2 className="w-5 h-5" />
+                  {language === 'es' ? 'Compartir' : language === 'fr' ? 'Partager' : language === 'ar' ? 'مشاركة' : 'Share'}
+                </h3>
+                <div className="flex items-center gap-3 flex-wrap">
+                  <button
+                    onClick={() => shareArticle(selectedArticle, 'facebook')}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                  >
+                    <Facebook className="w-4 h-4" />
+                    Facebook
+                  </button>
+                  <button
+                    onClick={() => shareArticle(selectedArticle, 'twitter')}
+                    className="flex items-center gap-2 px-4 py-2 bg-sky-500 hover:bg-sky-600 text-white rounded-lg transition-colors"
+                  >
+                    <Twitter className="w-4 h-4" />
+                    Twitter
+                  </button>
+                  <button
+                    onClick={() => shareArticle(selectedArticle, 'linkedin')}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-lg transition-colors"
+                  >
+                    <Linkedin className="w-4 h-4" />
+                    LinkedIn
+                  </button>
+                  <button
+                    onClick={() => shareArticle(selectedArticle, 'email')}
+                    className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                  >
+                    <Mail className="w-4 h-4" />
+                    Email
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Close Button */}
+            <div className="p-4 border-t border-white/10 text-center">
+              <button
+                onClick={() => setSelectedArticle(null)}
+                className="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+              >
+                {language === 'es' ? 'Cerrar' : language === 'fr' ? 'Fermer' : language === 'ar' ? 'إغلاق' : 'Close'}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
