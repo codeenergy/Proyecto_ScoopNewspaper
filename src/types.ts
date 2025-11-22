@@ -9,6 +9,8 @@ export interface Article {
   imageUrl: string;
   category: string;
   location?: string;
+  sourceUrl?: string; // Link to original article
+  sourceName?: string; // Name of the news source (BBC, NYT, etc)
 }
 
 export enum Category {

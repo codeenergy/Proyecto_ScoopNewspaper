@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Loader, X, Share2, Facebook, Twitter, Linkedin, Mail } from 'lucide-react';
+import { Loader, X, Share2, Facebook, Twitter, Linkedin, Mail, ExternalLink } from 'lucide-react';
 import { Article, Language } from '../types';
 import { TRANSLATIONS } from '../constants';
 
@@ -59,10 +59,17 @@ export const NewsFeed: React.FC<NewsFeedProps> = ({ articles, isLoading, languag
 
                 {/* Content */}
                 <div className="p-4 flex flex-col flex-1">
-                  {/* Category */}
-                  <span className="inline-block px-3 py-1 bg-blue-500/20 text-blue-400 text-xs font-semibold rounded-full mb-2 self-start">
-                    {article.category}
-                  </span>
+                  {/* Category & Source */}
+                  <div className="flex items-center gap-2 mb-2 flex-wrap">
+                    <span className="inline-block px-3 py-1 bg-blue-500/20 text-blue-400 text-xs font-semibold rounded-full">
+                      {article.category}
+                    </span>
+                    {article.sourceName && (
+                      <span className="inline-block px-2 py-1 bg-green-500/20 text-green-400 text-xs font-semibold rounded">
+                        {article.sourceName}
+                      </span>
+                    )}
+                  </div>
 
                   {/* Headline */}
                   <h2 className="font-serif font-bold text-lg text-white mb-2 line-clamp-2">
@@ -96,23 +103,35 @@ export const NewsFeed: React.FC<NewsFeedProps> = ({ articles, isLoading, languag
                   )}
 
                   {/* Actions */}
-                  <div className="mt-4 flex items-center gap-2">
+                  <div className="mt-4 flex items-center gap-2 flex-wrap">
                     {/* Read More Button */}
                     <button
                       onClick={() => setSelectedArticle(article)}
-                      className="flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors font-semibold text-sm"
+                      className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors font-semibold text-sm"
                     >
-                      Read More
+                      {language === 'es' ? 'Leer más' : language === 'fr' ? 'Lire plus' : language === 'ar' ? 'اقرأ المزيد' : 'Read More'}
                     </button>
+
+                    {/* Source Button */}
+                    {article.sourceUrl && (
+                      <a
+                        href={article.sourceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1 px-4 py-2 bg-green-500/20 hover:bg-green-500/30 text-green-400 rounded-lg transition-colors text-sm font-medium"
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                        {language === 'es' ? 'Fuente' : language === 'fr' ? 'Source' : language === 'ar' ? 'المصدر' : 'Source'}
+                      </a>
+                    )}
 
                     {/* Share Button */}
                     <button
                       onClick={() => setSelectedArticle(article)}
-                      className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 text-gray-300 rounded-lg transition-colors"
+                      className="flex items-center gap-2 px-3 py-2 bg-white/5 hover:bg-white/10 text-gray-300 rounded-lg transition-colors"
                       title="Share article"
                     >
                       <Share2 className="w-4 h-4" />
-                      <span className="text-sm font-medium">Share</span>
                     </button>
                   </div>
                 </div>

@@ -103,8 +103,8 @@ export async function fetchNews(
     );
 
     if (uniqueArticles.length > 0) {
-      // Map to our format - get up to 80 articles
-      const newsArticles = uniqueArticles.slice(0, 80).map((item: any, index: number) => ({
+      // Map to our format - get up to 100 articles
+      const newsArticles = uniqueArticles.slice(0, 100).map((item: any, index: number) => ({
         headline: item.title || 'No title',
         subheadline: item.description || '',
         author: item.author || 'Editorial',
@@ -113,7 +113,9 @@ export async function fetchNews(
         summary: item.description || '',
         imageUrl: item.urlToImage || `https://picsum.photos/seed/news-${index}/800/600`,
         category: category === 'All' ? getCategoryFromSource(item.source?.name) : category,
-        location: item.source?.name || 'International'
+        location: item.source?.name || 'International',
+        sourceUrl: item.url || '',
+        sourceName: item.source?.name || 'News Source'
       }));
 
       // Si el idioma no es inglés, traducir con Gemini

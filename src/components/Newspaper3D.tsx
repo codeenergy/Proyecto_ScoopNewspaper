@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, Loader, X, Share2, Facebook, Twitter, Linkedin, Mail } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Loader, X, Share2, Facebook, Twitter, Linkedin, Mail, ExternalLink } from 'lucide-react';
 import { Article, Language } from '../types';
 import { TRANSLATIONS } from '../constants';
 
@@ -125,17 +125,20 @@ export const Newspaper3D: React.FC<Newspaper3DProps> = ({
                   {article.subheadline}
                 </p>
 
+                {/* Source Badge */}
+                {article.sourceName && (
+                  <div className="mb-2">
+                    <span className="inline-block px-2 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded">
+                      {article.sourceName}
+                    </span>
+                  </div>
+                )}
+
                 {/* Meta */}
                 <div className="flex items-center gap-3 text-xs text-gray-500 mb-4">
                   <span>{article.author}</span>
                   <span>•</span>
                   <span>{article.date}</span>
-                  {article.location && (
-                    <>
-                      <span>•</span>
-                      <span>{article.location}</span>
-                    </>
-                  )}
                 </div>
 
                 {/* Content Preview */}
@@ -143,13 +146,26 @@ export const Newspaper3D: React.FC<Newspaper3DProps> = ({
                   {article.content}
                 </p>
 
-                {/* Read More Button */}
-                <button
-                  onClick={() => setSelectedArticle(article)}
-                  className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm font-semibold self-start"
-                >
-                  {language === 'es' ? 'Leer más' : language === 'fr' ? 'Lire plus' : language === 'ar' ? 'اقرأ المزيد' : 'Read More'}
-                </button>
+                {/* Buttons */}
+                <div className="mt-4 flex gap-2 flex-wrap">
+                  <button
+                    onClick={() => setSelectedArticle(article)}
+                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm font-semibold"
+                  >
+                    {language === 'es' ? 'Leer más' : language === 'fr' ? 'Lire plus' : language === 'ar' ? 'اقرأ المزيد' : 'Read More'}
+                  </button>
+                  {article.sourceUrl && (
+                    <a
+                      href={article.sourceUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg transition-colors text-sm font-semibold flex items-center gap-1"
+                    >
+                      <ExternalLink className="w-3 h-3" />
+                      {language === 'es' ? 'Ver original' : language === 'fr' ? 'Voir source' : language === 'ar' ? 'المصدر' : 'Source'}
+                    </a>
+                  )}
+                </div>
               </div>
             ))}
           </div>
@@ -230,17 +246,31 @@ export const Newspaper3D: React.FC<Newspaper3DProps> = ({
                 {selectedArticle.subheadline}
               </p>
 
+              {/* Source */}
+              {selectedArticle.sourceName && (
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="px-3 py-1 bg-green-500/20 text-green-400 text-sm font-semibold rounded">
+                    {selectedArticle.sourceName}
+                  </span>
+                  {selectedArticle.sourceUrl && (
+                    <a
+                      href={selectedArticle.sourceUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1 px-3 py-1 bg-white/10 hover:bg-white/20 text-white text-sm rounded transition-colors"
+                    >
+                      <ExternalLink className="w-3 h-3" />
+                      {language === 'es' ? 'Ver artículo original' : language === 'fr' ? 'Voir article original' : language === 'ar' ? 'عرض المقال الأصلي' : 'View original article'}
+                    </a>
+                  )}
+                </div>
+              )}
+
               {/* Meta */}
               <div className="flex items-center gap-3 text-sm text-gray-400 mb-6 pb-6 border-b border-white/10">
                 <span className="font-semibold">{selectedArticle.author}</span>
                 <span>•</span>
                 <span>{selectedArticle.date}</span>
-                {selectedArticle.location && (
-                  <>
-                    <span>•</span>
-                    <span>{selectedArticle.location}</span>
-                  </>
-                )}
               </div>
 
               {/* Content */}
