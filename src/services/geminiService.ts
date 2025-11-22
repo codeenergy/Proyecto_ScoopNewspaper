@@ -2,6 +2,7 @@ import { Article, Category } from '../types';
 import { MOCK_ARTICLES, NEWS_API_KEY } from '../constants';
 
 const GEMINI_API_KEY = 'AIzaSyDwDy3e_pHl4qoUcFu7kZCjdPX37BdLVcQ';
+const NEWSDATA_API_KEY = 'pub_31a1811a2f7543bf9c7103a819094a23';
 
 // Map language codes to NewsAPI language codes
 const languageMap: Record<string, string> = {
@@ -55,45 +56,77 @@ export async function fetchNews(
       return translationCache.get(cacheKey)!;
     }
 
-    // Intentar obtener noticias reales de NewsAPI
-    const categoryParam = category === 'All' ? 'general' : category.toLowerCase();
-    const countryParam = country === 'global' ? 'us' : country;
+    const categoryParam = category === 'All' ? 'top' : category.toLowerCase();
+    const countryParam = country === 'global' ? '' : country;
     const newsApiLang = languageMap[language] || 'en';
-
-    // Fetch from multiple endpoints to get more content
-    const endpoints: string[] = [];
-
-    // Priority 1: Premium sources (best newspapers)
-    endpoints.push(`https://newsapi.org/v2/top-headlines?sources=${PREMIUM_SOURCES.join(',')}&pageSize=100`);
-
-    // Priority 2: Category-specific or search
-    if (searchQuery) {
-      endpoints.push(`https://newsapi.org/v2/everything?q=${encodeURIComponent(searchQuery)}&language=${newsApiLang}&sortBy=publishedAt&pageSize=50`);
-    } else {
-      endpoints.push(`https://newsapi.org/v2/top-headlines?category=${categoryParam}&country=${countryParam}&pageSize=50`);
-    }
-
-    // Priority 3: Additional categories for diversity
-    if (category === 'All' && !searchQuery) {
-      const additionalCategories = ['technology', 'business', 'science', 'sports', 'entertainment', 'health'];
-      additionalCategories.forEach(cat => {
-        endpoints.push(`https://newsapi.org/v2/top-headlines?category=${cat}&country=${countryParam}&pageSize=15`);
-      });
-    }
 
     let allArticles: any[] = [];
 
-    for (const endpoint of endpoints) {
-      try {
-        const response = await fetch(`${endpoint}&apiKey=${NEWS_API_KEY}`);
-        if (response.ok) {
-          const data = await response.json();
-          if (data.articles) {
-            allArticles = [...allArticles, ...data.articles];
-          }
+    // Try NewsData.io first (works in production)
+    try {
+      console.log('Fetching from NewsData.io...');
+      const newsDataUrl = searchQuery
+        ? `https://newsdata.io/api/1/news?apikey=${NEWSDATA_API_KEY}&q=${encodeURIComponent(searchQuery)}&language=${newsApiLang}&size=10`
+        : `https://newsdata.io/api/1/news?apikey=${NEWSDATA_API_KEY}&language=${newsApiLang}&category=${categoryParam}${countryParam ? `&country=${countryParam}` : ''}&size=10`;
+
+      const newsDataResponse = await fetch(newsDataUrl);
+      if (newsDataResponse.ok) {
+        const newsDataJson = await newsDataResponse.json();
+        if (newsDataJson.results && newsDataJson.results.length > 0) {
+          console.log(`NewsData.io returned ${newsDataJson.results.length} articles`);
+          allArticles = newsDataJson.results.map((item: any) => ({
+            title: item.title,
+            description: item.description,
+            author: item.creator?.[0] || item.source_id,
+            publishedAt: item.pubDate,
+            content: item.content || item.description,
+            urlToImage: item.image_url,
+            url: item.link,
+            source: { name: item.source_id }
+          }));
         }
-      } catch (e) {
-        console.log('Endpoint failed:', endpoint);
+      }
+    } catch (e) {
+      console.log('NewsData.io failed:', e);
+    }
+
+    // Fallback to NewsAPI (only works on localhost)
+    if (allArticles.length === 0) {
+      console.log('Trying NewsAPI...');
+      const endpoints: string[] = [];
+
+      // Premium sources
+      endpoints.push(`https://newsapi.org/v2/top-headlines?sources=${PREMIUM_SOURCES.join(',')}&pageSize=100`);
+
+      // Category-specific or search
+      if (searchQuery) {
+        endpoints.push(`https://newsapi.org/v2/everything?q=${encodeURIComponent(searchQuery)}&language=${newsApiLang}&sortBy=publishedAt&pageSize=50`);
+      } else {
+        const newsCountry = country === 'global' ? 'us' : country;
+        endpoints.push(`https://newsapi.org/v2/top-headlines?category=${categoryParam === 'top' ? 'general' : categoryParam}&country=${newsCountry}&pageSize=50`);
+      }
+
+      // Additional categories
+      if (category === 'All' && !searchQuery) {
+        const additionalCategories = ['technology', 'business', 'science', 'sports', 'entertainment', 'health'];
+        const newsCountry = country === 'global' ? 'us' : country;
+        additionalCategories.forEach(cat => {
+          endpoints.push(`https://newsapi.org/v2/top-headlines?category=${cat}&country=${newsCountry}&pageSize=15`);
+        });
+      }
+
+      for (const endpoint of endpoints) {
+        try {
+          const response = await fetch(`${endpoint}&apiKey=${NEWS_API_KEY}`);
+          if (response.ok) {
+            const data = await response.json();
+            if (data.articles) {
+              allArticles = [...allArticles, ...data.articles];
+            }
+          }
+        } catch (e) {
+          console.log('NewsAPI endpoint failed:', endpoint);
+        }
       }
     }
 
@@ -103,6 +136,7 @@ export async function fetchNews(
     );
 
     if (uniqueArticles.length > 0) {
+      console.log(`Processing ${uniqueArticles.length} unique articles`);
       // Map to our format - get up to 100 articles
       const newsArticles = uniqueArticles.slice(0, 100).map((item: any, index: number) => ({
         headline: item.title || 'No title',
@@ -131,8 +165,8 @@ export async function fetchNews(
       return newsArticles;
     }
 
-    // Si NewsAPI falla, usar Gemini para generar noticias
-    console.log('NewsAPI no disponible, usando Gemini para generar noticias...');
+    // Si ambas APIs fallan, usar Gemini para generar noticias
+    console.log('Both APIs failed, using Gemini to generate news...');
     return await generateNewsWithGemini(category, language, country);
 
   } catch (error) {
