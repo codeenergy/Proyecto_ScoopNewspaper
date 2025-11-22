@@ -65,26 +65,63 @@ export async function fetchNews(
     // Try NewsData.io first (works in production)
     try {
       console.log('Fetching from NewsData.io...');
-      const newsDataUrl = searchQuery
-        ? `https://newsdata.io/api/1/news?apikey=${NEWSDATA_API_KEY}&q=${encodeURIComponent(searchQuery)}&language=${newsApiLang}&size=10`
-        : `https://newsdata.io/api/1/news?apikey=${NEWSDATA_API_KEY}&language=${newsApiLang}&category=${categoryParam}${countryParam ? `&country=${countryParam}` : ''}&size=10`;
 
-      const newsDataResponse = await fetch(newsDataUrl);
-      if (newsDataResponse.ok) {
-        const newsDataJson = await newsDataResponse.json();
-        if (newsDataJson.results && newsDataJson.results.length > 0) {
-          console.log(`NewsData.io returned ${newsDataJson.results.length} articles`);
-          allArticles = newsDataJson.results.map((item: any) => ({
-            title: item.title,
-            description: item.description,
-            author: item.creator?.[0] || item.source_id,
-            publishedAt: item.pubDate,
-            content: item.content || item.description,
-            urlToImage: item.image_url,
-            url: item.link,
-            source: { name: item.source_id }
-          }));
+      // If searching, fetch single query with max size
+      if (searchQuery) {
+        const newsDataUrl = `https://newsdata.io/api/1/news?apikey=${NEWSDATA_API_KEY}&q=${encodeURIComponent(searchQuery)}&language=${newsApiLang}&size=10`;
+        const newsDataResponse = await fetch(newsDataUrl);
+        if (newsDataResponse.ok) {
+          const newsDataJson = await newsDataResponse.json();
+          if (newsDataJson.results && newsDataJson.results.length > 0) {
+            console.log(`NewsData.io returned ${newsDataJson.results.length} articles for search`);
+            allArticles = newsDataJson.results.map((item: any) => ({
+              title: item.title,
+              description: item.description,
+              author: item.creator?.[0] || item.source_id,
+              publishedAt: item.pubDate,
+              content: item.content || item.description,
+              urlToImage: item.image_url,
+              url: item.link,
+              source: { name: item.source_id }
+            }));
+          }
         }
+      } else {
+        // Make multiple parallel requests for different categories to maximize content
+        const categories = category === 'All'
+          ? ['top', 'technology', 'business', 'science', 'sports', 'entertainment', 'health', 'world']
+          : [categoryParam];
+
+        const fetchPromises = categories.map(async (cat) => {
+          try {
+            const url = `https://newsdata.io/api/1/news?apikey=${NEWSDATA_API_KEY}&language=${newsApiLang}&category=${cat}${countryParam ? `&country=${countryParam}` : ''}&size=10`;
+            const response = await fetch(url);
+            if (response.ok) {
+              const json = await response.json();
+              if (json.results && json.results.length > 0) {
+                console.log(`NewsData.io returned ${json.results.length} articles for ${cat}`);
+                return json.results.map((item: any) => ({
+                  title: item.title,
+                  description: item.description,
+                  author: item.creator?.[0] || item.source_id,
+                  publishedAt: item.pubDate,
+                  content: item.content || item.description,
+                  urlToImage: item.image_url,
+                  url: item.link,
+                  source: { name: item.source_id }
+                }));
+              }
+            }
+            return [];
+          } catch (e) {
+            console.log(`NewsData.io failed for ${cat}:`, e);
+            return [];
+          }
+        });
+
+        const results = await Promise.all(fetchPromises);
+        allArticles = results.flat();
+        console.log(`NewsData.io total: ${allArticles.length} articles from ${categories.length} categories`);
       }
     } catch (e) {
       console.log('NewsData.io failed:', e);
@@ -137,8 +174,8 @@ export async function fetchNews(
 
     if (uniqueArticles.length > 0) {
       console.log(`Processing ${uniqueArticles.length} unique articles`);
-      // Map to our format - get up to 100 articles
-      const newsArticles = uniqueArticles.slice(0, 100).map((item: any, index: number) => ({
+      // Map to our format - get up to 200 articles for maximum content
+      const newsArticles = uniqueArticles.slice(0, 200).map((item: any, index: number) => ({
         headline: item.title || 'No title',
         subheadline: item.description || '',
         author: item.author || 'Editorial',
