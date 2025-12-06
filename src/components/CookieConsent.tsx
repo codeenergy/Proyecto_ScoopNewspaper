@@ -5,7 +5,7 @@ import { X, Cookie } from 'lucide-react';
  * Cookie Consent Banner - GDPR Compliant
  *
  * Este componente muestra un banner de consentimiento de cookies
- * requerido por GDPR para sitios que usan Google AdSense y Analytics
+ * requerido por GDPR para sitios que usan publicidad y analytics
  */
 export const CookieConsent: React.FC = () => {
   const [showBanner, setShowBanner] = useState(false);
@@ -62,8 +62,8 @@ export const CookieConsent: React.FC = () => {
                 "Accept All", you consent to our use of cookies.
               </p>
               <p className="text-gray-400 text-xs mb-4">
-                This site uses <strong>Google AdSense</strong> and <strong>Google Analytics</strong>.
-                These services use cookies to deliver and improve ads, and to analyze traffic.{' '}
+                This site uses <strong>Monetag</strong> advertising services.
+                These services use cookies to deliver personalized ads and analyze traffic.{' '}
                 <a
                   href="/privacy-policy"
                   target="_blank"
