@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    <!-- Favicon & App Icons -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📰</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📰</text></svg>">
+
+    <!-- Primary SEO -->
+    <title>ScoopNewspaper 3D | Breaking News, World News & AI-Powered Journalism</title>
+    <meta name="description" content="Experience the future of news with ScoopNewspaper 3D. Get breaking news, world headlines, business, technology, sports & entertainment in an immersive 3D newspaper. Powered by AI with real-time updates in 4 languages." />
+    <meta name="keywords" content="breaking news, world news, 3D newspaper, digital newspaper, AI news, technology news, business news, sports news, entertainment, international news, ScoopNewspaper" />
+    <meta name="author" content="Code Energy - https://codeenergy.org" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="theme-color" content="#111111" />
+    <link rel="canonical" href="https://scoopnewspaper.com/" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://scoopnewspaper.com/" />
+    <meta property="og:title" content="ScoopNewspaper 3D | Breaking News & AI-Powered Journalism" />
+    <meta property="og:description" content="Experience news like never before. Immersive 3D newspaper with breaking news, world headlines & AI-powered journalism in 4 languages." />
+    <meta property="og:image" content="https://scoopnewspaper.com/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content="ScoopNewspaper 3D" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="es_ES" />
+    <meta property="og:locale:alternate" content="fr_FR" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://scoopnewspaper.com/" />
+    <meta name="twitter:title" content="ScoopNewspaper 3D | Breaking News & AI-Powered Journalism" />
+    <meta name="twitter:description" content="Experience news like never before. Immersive 3D newspaper with breaking news in 4 languages." />
+    <meta name="twitter:image" content="https://scoopnewspaper.com/twitter-image.jpg" />
+    <meta name="twitter:creator" content="@ScoopNewspaper" />
+
+    <!-- Structured Data - JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "NewsMediaOrganization",
+      "name": "ScoopNewspaper 3D",
+      "url": "https://scoopnewspaper.com",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://scoopnewspaper.com/logo.png",
+        "width": 512,
+        "height": 512
+      },
+      "description": "Immersive 3D digital newspaper with AI-powered journalism, breaking news, and world headlines in 4 languages",
+      "sameAs": [
+        "https://twitter.com/ScoopNewspaper",
+        "https://facebook.com/ScoopNewspaper"
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "email": "contact@scoopnewspaper.com",
+        "contactType": "Customer Service"
+      },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://scoopnewspaper.com/?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+
+    <!-- Additional Meta -->
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="ScoopNewspaper" />
+
+    <!-- Tailwind CDN (Kept for simplicity) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <script>
+      tailwind.config = {
+        darkMode: 'media',
+        theme: {
+          extend: {
+            fontFamily: {
+              serif: ['"Playfair Display"', 'serif'],
+              sans: ['"Inter"', 'sans-serif'],
+            },
+            colors: {
+              paper: '#fdfbf7',
+              ink: '#1a1a1a',
+              'old-paper': '#f0e6d2',
+            },
+            boxShadow: {
+              'page': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06), inset 0 0 20px rgba(0,0,0,0.02)',
+            }
+          },
+        },
+      }
+    </script>
+      <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1251254180172338"
+     crossorigin="anonymous"></script>
+    <style>
+      body { margin: 0; padding: 0; overflow: hidden; background-color: #111; color: #eee; }
+      
+      /* Scrollbars */
+      ::-webkit-scrollbar { width: 6px; height: 6px; }
+      ::-webkit-scrollbar-track { background: transparent; margin-block: 4px; }
+      ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 100vw; border: 1px solid rgba(255, 255, 255, 0.05); backdrop-filter: blur(4px); }
+      ::-webkit-scrollbar-thumb:hover { background: rgba(59, 130, 246, 0.6); border-color: rgba(59, 130, 246, 0.4); }
+      * { scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.1) transparent; }
+      
+      /* Utils */
+      .glass-panel { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.18); }
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      .article-scroll::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.2); }
+      .article-scroll::-webkit-scrollbar-thumb:hover { background: rgba(0, 0, 0, 0.4); }
+    </style>
+
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+</body>
+</html>
