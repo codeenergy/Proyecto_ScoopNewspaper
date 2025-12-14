@@ -45,7 +45,7 @@
   ],
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/((?!sw\\.js$).*)",
       "destination": "/index.html"
     }
   ]
