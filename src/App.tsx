@@ -5,7 +5,6 @@ import { Controls } from './components/Controls';
 import { Newspaper3D } from './components/Newspaper3D';
 import { NewsFeed } from './components/NewsFeed';
 import { VideoSupporters } from './components/VideoSupporters';
-import { AdManager } from './components/AdManager';
 import { fetchNews } from './services/geminiService';
 import { FilterState, NewsState } from './types';
 import { REFRESH_INTERVAL_MS } from './constants';
@@ -120,9 +119,6 @@ const App: React.FC = () => {
 
       {/* Footer */}
       <Footer language={filterState.language} />
-
-      {/* Monetag Ads Manager - Controlled Integration */}
-      <AdManager enabled={true} />
 
       {/* Video & Supporters Modal */}
       {showVideoSupporters && (
