@@ -2,15 +2,30 @@
 
 Bienvenido a **ScoopNewspaper**, una experiencia de noticias interactiva en 3D potenciada por IA. Este proyecto utiliza React, Three.js (vía CSS3D), Framer Motion y la API de Google Gemini.
 
+## ✨ Características Principales
+
+- 🌐 **Soporte Multiidioma**: 4 idiomas (Inglés, Español, Francés, Árabe)
+- 📱 **Sistema de Publicidad Integrado**: Monetag ads con control de experiencia de usuario
+- 🤖 **IA Avanzada**: Generación y traducción automática de noticias con Gemini
+- 🎨 **Interfaz 3D Inmersiva**: Experiencia de lectura única con efecto de periódico real
+- 🔄 **Sistema Multi-API**: Múltiples fuentes de noticias con fallback automático
+
 ## 🔑 Configuración de APIs
 
-El proyecto ya incluye un archivo `.env` pre-configurado con las siguientes claves necesarias para el funcionamiento:
+El proyecto utiliza múltiples APIs integradas:
 
-*   **Gemini API:** Generación de contenido y resumen de noticias.
-*   **NewsAPI:** Obtención de titulares en tiempo real.
-*   **OpenWeather API:** Datos meteorológicos en la cabecera.
+### APIs de Noticias (con sistema de fallback)
+1. **NewsData.io API** - Principal (funciona en producción)
+2. **NewsAPI** - Secundaria (solo localhost)
+3. **Gemini AI** - Generación automática de noticias
+4. **Mock Articles** - Respaldo final
 
-> **Nota:** Si necesitas cambiar estas claves, edita directamente el archivo `.env` en la raíz del proyecto.
+### Otras APIs
+*   **Gemini API:** Generación de contenido, traducción y resumen de noticias
+*   **OpenWeather API:** Datos meteorológicos en la cabecera
+*   **Monetag Ads:** Sistema de monetización integrado
+
+> **Nota:** Todas las API keys están configuradas en `src/constants.ts` y `src/services/geminiService.ts`
 
 ## 🚀 Guía de Instalación y Ejecución
 
@@ -56,4 +71,27 @@ Abre esa dirección en tu navegador para ver la aplicación.
 **2. La API de NewsAPI falla en desarrollo (CORS):**
 *   El proyecto tiene un sistema de "fallback" (respaldo). Si NewsAPI falla por restricciones del navegador en modo local, **Gemini generará noticias simuladas automáticamente**, por lo que la app nunca se quedará vacía.
 
+## 🌍 Internacionalización
+
+El proyecto soporta 4 idiomas completos:
+- 🇬🇧 **Inglés** - Idioma por defecto
+- 🇪🇸 **Español** - Traducción completa
+- 🇫🇷 **Francés** - Traducción completa
+- 🇸🇦 **Árabe** - Traducción completa con soporte RTL
+
+Las noticias en inglés se traducen automáticamente usando Gemini AI para otros idiomas.
+
+## 📊 Sistema de Publicidad
+
+Integración controlada de **Monetag Ads**:
+- Vignette Banner (Zona: 10325588)
+- Push Notifications (Zona: 10325585)
+- Direct Link disponible
+
+El sistema está diseñado para no afectar la experiencia del usuario.
+
+---
+
 ¡Disfruta de la lectura en el futuro! 🗞️✨
+
+**Última actualización:** Diciembre 2024 - v2.0
