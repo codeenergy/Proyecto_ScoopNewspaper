@@ -68,7 +68,16 @@ export const TRANSLATIONS: Record<Language, any> = {
     contact: "Contact",
     privacy: "Privacy Policy",
     terms: "Terms of Service",
-    rights: "All rights reserved."
+    cookies: "Cookies Policy",
+    close: "Close",
+    rights: "All rights reserved.",
+    developedBy: "Developed & Designed by",
+    // Modal Content
+    aboutTitle: "About Us",
+    aboutContent: `${APP_NAME} is an innovative news platform that combines 3D technology with artificial intelligence to offer a unique and immersive reading experience. Our goal is to revolutionize the way you consume news, making information more accessible, visual and engaging.`,
+    privacyContent: "At ScoopNewspaper we respect your privacy. We do not sell or share your personal data. We use cookies only to improve your browsing experience. All data is processed in accordance with GDPR and international data protection regulations.",
+    termsContent: "By using ScoopNewspaper, you accept our terms of service. Content is provided 'as is' for informational purposes. We reserve the right to modify these terms at any time. Continued use of the service constitutes acceptance of such changes.",
+    cookiesContent: "We use essential cookies for site operation and analytical cookies to improve your experience. You can configure or reject cookies at any time from your browser settings without affecting basic site functionality."
   },
   es: {
     loading: "Imprimiendo la última edición...",
@@ -90,7 +99,16 @@ export const TRANSLATIONS: Record<Language, any> = {
     contact: "Contacto",
     privacy: "Política de Privacidad",
     terms: "Términos de Servicio",
-    rights: "Todos los derechos reservados."
+    cookies: "Política de Cookies",
+    close: "Cerrar",
+    rights: "Todos los derechos reservados.",
+    developedBy: "Desarrollado y Diseñado por",
+    // Modal Content
+    aboutTitle: "Sobre Nosotros",
+    aboutContent: `${APP_NAME} es una plataforma innovadora de noticias que combina tecnología 3D con inteligencia artificial para ofrecer una experiencia de lectura única e inmersiva. Nuestro objetivo es revolucionar la forma en que consumes las noticias, haciendo que la información sea más accesible, visual y atractiva.`,
+    privacyContent: "En ScoopNewspaper respetamos tu privacidad. No vendemos ni compartimos tus datos personales. Utilizamos cookies solo para mejorar tu experiencia de navegación. Todos los datos se procesan de acuerdo con el GDPR y regulaciones internacionales de protección de datos.",
+    termsContent: "Al usar ScoopNewspaper, aceptas nuestros términos de servicio. El contenido se proporciona 'tal cual' con fines informativos. Nos reservamos el derecho de modificar estos términos en cualquier momento. El uso continuado del servicio constituye la aceptación de dichos cambios.",
+    cookiesContent: "Utilizamos cookies esenciales para el funcionamiento del sitio y cookies analíticas para mejorar tu experiencia. Puedes configurar o rechazar cookies en cualquier momento desde la configuración de tu navegador sin afectar la funcionalidad básica del sitio."
   },
   fr: {
     loading: "Impression de la dernière édition...",
@@ -112,7 +130,16 @@ export const TRANSLATIONS: Record<Language, any> = {
     contact: "Contact",
     privacy: "Confidentialité",
     terms: "Conditions d'utilisation",
-    rights: "Tous droits réservés."
+    cookies: "Politique de Cookies",
+    close: "Fermer",
+    rights: "Tous droits réservés.",
+    developedBy: "Développé et Conçu par",
+    // Modal Content
+    aboutTitle: "À Propos",
+    aboutContent: `${APP_NAME} est une plateforme d'actualités innovante qui combine la technologie 3D avec l'intelligence artificielle pour offrir une expérience de lecture unique et immersive. Notre objectif est de révolutionner la façon dont vous consommez les actualités, en rendant l'information plus accessible, visuelle et attrayante.`,
+    privacyContent: "Chez ScoopNewspaper, nous respectons votre vie privée. Nous ne vendons ni ne partageons vos données personnelles. Nous utilisons des cookies uniquement pour améliorer votre expérience de navigation. Toutes les données sont traitées conformément au RGPD et aux réglementations internationales sur la protection des données.",
+    termsContent: "En utilisant ScoopNewspaper, vous acceptez nos conditions d'utilisation. Le contenu est fourni 'tel quel' à des fins d'information. Nous nous réservons le droit de modifier ces conditions à tout moment. L'utilisation continue du service constitue l'acceptation de ces modifications.",
+    cookiesContent: "Nous utilisons des cookies essentiels pour le fonctionnement du site et des cookies analytiques pour améliorer votre expérience. Vous pouvez configurer ou refuser les cookies à tout moment depuis les paramètres de votre navigateur sans affecter les fonctionnalités de base du site."
   },
   ar: {
     loading: "جاري طباعة العدد الأخير...",
@@ -134,7 +161,16 @@ export const TRANSLATIONS: Record<Language, any> = {
     contact: "اتصل بنا",
     privacy: "الخصوصية",
     terms: "شروط الخدمة",
-    rights: "جميع الحقوق محفوظة."
+    cookies: "سياسة ملفات تعريف الارتباط",
+    close: "إغلاق",
+    rights: "جميع الحقوق محفوظة.",
+    developedBy: "تم التطوير والتصميم بواسطة",
+    // Modal Content
+    aboutTitle: "من نحن",
+    aboutContent: `${APP_NAME} هي منصة أخبار مبتكرة تجمع بين تقنية 3D والذكاء الاصطناعي لتقديم تجربة قراءة فريدة وغامرة. هدفنا هو إحداث ثورة في الطريقة التي تستهلك بها الأخبار، مما يجعل المعلومات أكثر سهولة وبصرية وجاذبية.`,
+    privacyContent: "في ScoopNewspaper نحن نحترم خصوصيتك. نحن لا نبيع أو نشارك بياناتك الشخصية. نحن نستخدم ملفات تعريف الارتباط فقط لتحسين تجربة التصفح الخاصة بك. تتم معالجة جميع البيانات وفقًا للائحة العامة لحماية البيانات واللوائح الدولية لحماية البيانات.",
+    termsContent: "باستخدام ScoopNewspaper، فإنك توافق على شروط الخدمة الخاصة بنا. يتم توفير المحتوى 'كما هو' لأغراض إعلامية. نحتفظ بالحق في تعديل هذه الشروط في أي وقت. يشكل الاستخدام المستمر للخدمة قبولاً لهذه التغييرات.",
+    cookiesContent: "نحن نستخدم ملفات تعريف الارتباط الأساسية لتشغيل الموقع وملفات تعريف الارتباط التحليلية لتحسين تجربتك. يمكنك تكوين أو رفض ملفات تعريف الارتباط في أي وقت من إعدادات المتصفح الخاص بك دون التأثير على الوظائف الأساسية للموقع."
   }
 };
 

@@ -17,23 +17,23 @@ export const Footer: React.FC<FooterProps> = ({ language }) => {
     switch (type) {
       case 'about':
         return {
-          title: 'Sobre Nosotros',
-          content: `${APP_NAME} es una plataforma innovadora de noticias que combina tecnología 3D con inteligencia artificial para ofrecer una experiencia de lectura única e inmersiva. Nuestro objetivo es revolucionar la forma en que consumes las noticias, haciendo que la información sea más accesible, visual y atractiva.`
+          title: t.aboutTitle,
+          content: t.aboutContent
         };
       case 'privacy':
         return {
           title: t.privacy,
-          content: 'En ScoopNewspaper respetamos tu privacidad. No vendemos ni compartimos tus datos personales. Utilizamos cookies solo para mejorar tu experiencia de navegación. Todos los datos se procesan de acuerdo con el GDPR y regulaciones internacionales de protección de datos.'
+          content: t.privacyContent
         };
       case 'terms':
         return {
           title: t.terms,
-          content: 'Al usar ScoopNewspaper, aceptas nuestros términos de servicio. El contenido se proporciona "tal cual" con fines informativos. Nos reservamos el derecho de modificar estos términos en cualquier momento. El uso continuado del servicio constituye la aceptación de dichos cambios.'
+          content: t.termsContent
         };
       case 'cookies':
         return {
-          title: 'Política de Cookies',
-          content: 'Utilizamos cookies esenciales para el funcionamiento del sitio y cookies analíticas para mejorar tu experiencia. Puedes configurar o rechazar cookies en cualquier momento desde la configuración de tu navegador sin afectar la funcionalidad básica del sitio.'
+          title: t.cookies,
+          content: t.cookiesContent
         };
       default:
         return { title: '', content: '' };
@@ -66,7 +66,7 @@ export const Footer: React.FC<FooterProps> = ({ language }) => {
             {/* Center: Links */}
             <div className="flex flex-wrap gap-4">
               <button onClick={() => openModal('about')} className="text-gray-400 hover:text-blue-400 transition-colors">
-                Sobre Nosotros
+                {t.about}
               </button>
               <span className="text-gray-600">|</span>
               <button onClick={() => openModal('privacy')} className="text-gray-400 hover:text-blue-400 transition-colors">
@@ -76,7 +76,7 @@ export const Footer: React.FC<FooterProps> = ({ language }) => {
                 {t.terms}
               </button>
               <button onClick={() => openModal('cookies')} className="text-gray-400 hover:text-blue-400 transition-colors">
-                Cookies
+                {t.cookies}
               </button>
             </div>
 
@@ -96,7 +96,7 @@ export const Footer: React.FC<FooterProps> = ({ language }) => {
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-blue-400 transition-colors text-xs"
               >
-                Developed & Designed by <span className="font-semibold text-blue-400">Code Energy</span>
+                {t.developedBy} <span className="font-semibold text-blue-400">Code Energy</span>
               </a>
             </div>
           </div>
@@ -135,7 +135,7 @@ export const Footer: React.FC<FooterProps> = ({ language }) => {
                 onClick={closeModal}
                 className="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
               >
-                Cerrar
+                {t.close}
               </button>
             </div>
           </div>
