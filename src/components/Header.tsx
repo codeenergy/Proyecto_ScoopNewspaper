@@ -295,6 +295,20 @@ export const Header: React.FC<HeaderProps> = ({
                 </div>
               </div>
 
+              {/* Video & Supporters Button for Mobile */}
+              {onOpenVideoSupporters && (
+                <button
+                  onClick={() => {
+                    setShowMobileMenu(false);
+                    onOpenVideoSupporters();
+                  }}
+                  className="w-full px-4 py-3 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 rounded-lg transition-all text-white font-semibold flex items-center justify-center gap-2"
+                >
+                  <Play className="w-4 h-4" />
+                  Video & Supporters
+                </button>
+              )}
+
               {/* Close Button */}
               <button
                 onClick={() => setShowMobileMenu(false)}
