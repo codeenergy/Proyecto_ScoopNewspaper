@@ -5,7 +5,7 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://www.googletagmanager.com https://gizokraijaw.net https://3nbf4.com https://otieu.com https://nap5k.com; connect-src 'self' https://www.google-analytics.com https://api.thenewsapi.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: http:; frame-src 'self' https://gizokraijaw.net https://3nbf4.com https://otieu.com https://nap5k.com;"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://www.googletagmanager.com https://gizokraijaw.net https://3nbf4.com https://otieu.com https://nap5k.com *.monetag.com *.propellerads.com; connect-src 'self' https://www.google-analytics.com https://api.thenewsapi.com https://gizokraijaw.net https://3nbf4.com https://otieu.com https://nap5k.com *.monetag.com *.propellerads.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: http:; frame-src 'self' https://gizokraijaw.net https://3nbf4.com https://otieu.com https://nap5k.com *.monetag.com *.propellerads.com;"
         },
         {
           "key": "X-Frame-Options",
