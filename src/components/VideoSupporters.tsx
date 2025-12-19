@@ -8,73 +8,73 @@ interface VideoSupportersProps {
 const PRODUCTS = [
   {
     id: 1,
-    name: 'Digital Marketing Mastery',
-    description: 'Master SEO, ads & social media to grow your business',
-    price: 'Premium Course',
-    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop',
+    name: '230+ Recetas de Postres',
+    description: 'Aprende a preparar postres deliciosos sin horno, con coberturas exquisitas y más',
+    price: 'Curso Online',
+    image: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=800&h=600&fit=crop',
     buyLink: 'https://go.hotmart.com/E103121102Q?dp=1',
-    videoUrl: 'https://www.youtube.com/embed/bixR-KIJKYM',
-    gradient: 'from-blue-500 to-cyan-600'
+    videoUrl: 'https://www.youtube.com/embed/VKHFZhLX5i8',
+    gradient: 'from-pink-500 to-rose-600'
   },
   {
     id: 2,
-    name: 'Crypto Trading Academy',
-    description: 'Learn profitable strategies for cryptocurrency trading',
-    price: 'Exclusive Access',
-    image: 'https://images.unsplash.com/photo-1621761191319-c6fb62004040?w=800&h=600&fit=crop',
+    name: 'Libertad Financiera',
+    description: 'Deja tu empleo sin consecuencias financieras. Guía completa de 213 páginas',
+    price: 'eBook Premium',
+    image: 'https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=800&h=600&fit=crop',
     buyLink: 'https://go.hotmart.com/A101639222W?dp=1',
-    videoUrl: 'https://www.youtube.com/embed/1YyAzVmP9xQ',
-    gradient: 'from-purple-500 to-pink-600'
+    videoUrl: 'https://www.youtube.com/embed/mOhzl98NqIw',
+    gradient: 'from-green-500 to-emerald-600'
   },
   {
     id: 3,
-    name: 'Full Stack Developer Pro',
-    description: 'Become a professional web developer in 6 months',
-    price: 'Complete Bundle',
-    image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=600&fit=crop',
+    name: 'Diseña con Resina Epoxi',
+    description: 'Crea joyería, llaveros y accesorios únicos. De principiante a experto',
+    price: 'Acceso de por vida',
+    image: 'https://images.unsplash.com/photo-1611955167811-4711904bb9f8?w=800&h=600&fit=crop',
     buyLink: 'https://go.hotmart.com/K101644464P?dp=1',
-    videoUrl: 'https://www.youtube.com/embed/nu_pCVPKzTk',
-    gradient: 'from-green-500 to-teal-600'
+    videoUrl: 'https://www.youtube.com/embed/JnStWI4Vf7A',
+    gradient: 'from-purple-500 to-pink-600'
   },
   {
     id: 4,
-    name: 'English Fluency Blueprint',
-    description: 'Speak English fluently with confidence in 90 days',
-    price: 'Language Course',
-    image: 'https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=800&h=600&fit=crop',
+    name: 'Velas Artesanales Pro',
+    description: 'Domina el arte de crear velas decorativas. Incluye lista de proveedores',
+    price: 'Curso Certificado',
+    image: 'https://images.unsplash.com/photo-1602874801006-ec07446vs9e3c?w=800&h=600&fit=crop',
     buyLink: 'https://go.hotmart.com/E103136583X?dp=1',
-    videoUrl: 'https://www.youtube.com/embed/sLCiMpUfj2Y',
-    gradient: 'from-orange-500 to-red-600'
+    videoUrl: 'https://www.youtube.com/embed/xFEp87KxEK0',
+    gradient: 'from-amber-500 to-orange-600'
   },
   {
     id: 5,
-    name: 'Productivity Power System',
-    description: 'Time management secrets of top entrepreneurs',
-    price: 'Premium Training',
-    image: 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=800&h=600&fit=crop',
+    name: 'Extensiones V-Light',
+    description: 'Certificación profesional en extensiones de cabello. Duración hasta 4 meses',
+    price: 'Programa Completo',
+    image: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800&h=600&fit=crop',
     buyLink: 'https://go.hotmart.com/Q101638891S?dp=1',
-    videoUrl: 'https://www.youtube.com/embed/y2X7c9TUQJ8',
-    gradient: 'from-indigo-500 to-purple-600'
+    videoUrl: 'https://www.youtube.com/embed/rCcPF0cRSFI',
+    gradient: 'from-violet-500 to-purple-600'
   },
   {
     id: 6,
-    name: 'YouTube Creator Masterclass',
-    description: 'Build a profitable YouTube channel from scratch',
-    price: 'Creator Bundle',
-    image: 'https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?w=800&h=600&fit=crop',
+    name: 'Master en Decoración con Globos',
+    description: 'Convierte tu tiempo libre en ingresos. 3 niveles + certificación oficial',
+    price: 'Mentorías en Vivo',
+    image: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800&h=600&fit=crop',
     buyLink: 'https://go.hotmart.com/T101431344N?dp=1',
-    videoUrl: 'https://www.youtube.com/embed/zQoZHX3bJx0',
-    gradient: 'from-cyan-500 to-blue-600'
+    videoUrl: 'https://www.youtube.com/embed/3aLy0mAYUYo',
+    gradient: 'from-blue-500 to-cyan-600'
   },
   {
     id: 7,
-    name: 'AI Business Revolution',
-    description: 'Use ChatGPT & AI to automate and scale your business',
-    price: 'Future Skills',
-    image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=600&fit=crop',
+    name: 'Moldes de Silicona Caseros',
+    description: 'Aprende a elaborar tus propios moldes desde casa. Ahorra dinero',
+    price: 'Guía Práctica',
+    image: 'https://images.unsplash.com/photo-1452860606245-08befc0ff44b?w=800&h=600&fit=crop',
     buyLink: 'https://go.hotmart.com/I101639218Q?dp=1',
-    videoUrl: 'https://www.youtube.com/embed/JTxsNm9IdYU',
-    gradient: 'from-pink-500 to-rose-600'
+    videoUrl: 'https://www.youtube.com/embed/OY8l4wcABMk',
+    gradient: 'from-teal-500 to-green-600'
   }
 ];
 
@@ -213,67 +213,6 @@ export const VideoSupporters: React.FC<VideoSupportersProps> = ({ onClose }) => 
                   }`}
                 />
               ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Supporters Section */}
-        <div className="p-6 border-t border-white/10">
-          <h3 className="text-xl font-bold text-white mb-4 text-center">Our Partners</h3>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {/* Code Energy */}
-            <a
-              href="https://codeenergy.org"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="glass-panel p-3 rounded-lg hover:border-blue-500/50 transition-all group text-center"
-            >
-              <div className="w-12 h-12 mx-auto mb-1 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
-                CE
-              </div>
-              <h4 className="text-white font-semibold text-xs mb-1">Code Energy</h4>
-              <ExternalLink className="w-3 h-3 text-blue-400 mx-auto group-hover:scale-110 transition-transform" />
-            </a>
-
-            {/* Google Gemini */}
-            <div className="glass-panel p-3 rounded-lg text-center">
-              <div className="w-12 h-12 mx-auto mb-1 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
-                AI
-              </div>
-              <h4 className="text-white font-semibold text-xs">Gemini</h4>
-            </div>
-
-            {/* NewsAPI */}
-            <div className="glass-panel p-3 rounded-lg text-center">
-              <div className="w-12 h-12 mx-auto mb-1 bg-gradient-to-br from-green-500 to-teal-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
-                NA
-              </div>
-              <h4 className="text-white font-semibold text-xs">NewsAPI</h4>
-            </div>
-
-            {/* React */}
-            <div className="glass-panel p-3 rounded-lg text-center">
-              <div className="w-12 h-12 mx-auto mb-1 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
-                ⚛️
-              </div>
-              <h4 className="text-white font-semibold text-xs">React</h4>
-            </div>
-
-            {/* Vite */}
-            <div className="glass-panel p-3 rounded-lg text-center">
-              <div className="w-12 h-12 mx-auto mb-1 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
-                ⚡
-              </div>
-              <h4 className="text-white font-semibold text-xs">Vite</h4>
-            </div>
-
-            {/* You */}
-            <div className="glass-panel p-3 rounded-lg text-center">
-              <div className="w-12 h-12 mx-auto mb-1 bg-gradient-to-br from-pink-500 to-rose-600 rounded-full flex items-center justify-center text-white text-lg">
-                ❤️
-              </div>
-              <h4 className="text-white font-semibold text-xs">You!</h4>
             </div>
           </div>
         </div>
