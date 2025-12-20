@@ -3,7 +3,6 @@ import { Article, Category, Language } from './types';
 
 export const APP_NAME = "ScoopNewspaper";
 export const REFRESH_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
-export const NEWS_API_KEY = "39d3f89262e248a8914a5d1a397a71ec";
 export const WEATHER_API_KEY = "18e874860c7306c232e96c78c4e12ba7";
 
 export const LANGUAGES = [

@@ -1,10 +1,10 @@
 import { Article, Category } from '../types';
-import { MOCK_ARTICLES, NEWS_API_KEY } from '../constants';
+import { MOCK_ARTICLES } from '../constants';
 
 const GEMINI_API_KEY = 'AIzaSyDwDy3e_pHl4qoUcFu7kZCjdPX37BdLVcQ';
 const NEWSDATA_API_KEY = 'pub_31a1811a2f7543bf9c7103a819094a23';
 
-// Map language codes to NewsAPI language codes
+// Map language codes for NewsData.io
 const languageMap: Record<string, string> = {
   'en': 'en',
   'es': 'es',
@@ -19,25 +19,6 @@ const languageNames: Record<string, string> = {
   'fr': 'French',
   'ar': 'Arabic'
 };
-
-// Premium news sources - top newspapers worldwide
-const PREMIUM_SOURCES = [
-  'bbc-news',
-  'the-new-york-times',
-  'the-guardian-uk',
-  'reuters',
-  'associated-press',
-  'bloomberg',
-  'the-washington-post',
-  'cnn',
-  'al-jazeera-english',
-  'the-wall-street-journal',
-  'financial-times',
-  'the-economist',
-  'time',
-  'abc-news',
-  'nbc-news'
-];
 
 // Cache for translated articles to avoid re-translating
 const translationCache: Map<string, Article[]> = new Map();
@@ -125,46 +106,6 @@ export async function fetchNews(
       }
     } catch (e) {
       console.log('NewsData.io failed:', e);
-    }
-
-    // Fallback to NewsAPI (only works on localhost)
-    if (allArticles.length === 0) {
-      console.log('Trying NewsAPI...');
-      const endpoints: string[] = [];
-
-      // Premium sources
-      endpoints.push(`https://newsapi.org/v2/top-headlines?sources=${PREMIUM_SOURCES.join(',')}&pageSize=100`);
-
-      // Category-specific or search
-      if (searchQuery) {
-        endpoints.push(`https://newsapi.org/v2/everything?q=${encodeURIComponent(searchQuery)}&language=${newsApiLang}&sortBy=publishedAt&pageSize=50`);
-      } else {
-        const newsCountry = country === 'global' ? 'us' : country;
-        endpoints.push(`https://newsapi.org/v2/top-headlines?category=${categoryParam === 'top' ? 'general' : categoryParam}&country=${newsCountry}&pageSize=50`);
-      }
-
-      // Additional categories
-      if (category === 'All' && !searchQuery) {
-        const additionalCategories = ['technology', 'business', 'science', 'sports', 'entertainment', 'health'];
-        const newsCountry = country === 'global' ? 'us' : country;
-        additionalCategories.forEach(cat => {
-          endpoints.push(`https://newsapi.org/v2/top-headlines?category=${cat}&country=${newsCountry}&pageSize=15`);
-        });
-      }
-
-      for (const endpoint of endpoints) {
-        try {
-          const response = await fetch(`${endpoint}&apiKey=${NEWS_API_KEY}`);
-          if (response.ok) {
-            const data = await response.json();
-            if (data.articles) {
-              allArticles = [...allArticles, ...data.articles];
-            }
-          }
-        } catch (e) {
-          console.log('NewsAPI endpoint failed:', endpoint);
-        }
-      }
     }
 
     // Remove duplicates by title
