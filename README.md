@@ -84,9 +84,10 @@ Las noticias en inglés se traducen automáticamente usando Gemini AI para otros
 ## 📊 Sistema de Publicidad
 
 Integración controlada de **Monetag Ads**:
+- Native Banner (Zona: 10331862)
 - Vignette Banner (Zona: 10325588)
 - Push Notifications (Zona: 10325585)
-- Direct Link disponible
+- Popunder/Direct Link (Zona: 10325584)
 
 El sistema está diseñado para no afectar la experiencia del usuario.
 
