@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, ShoppingCart, ExternalLink, ChevronLeft, ChevronRight, Play } from 'lucide-react';
+import { X, ShoppingCart, ChevronLeft, ChevronRight, Play } from 'lucide-react';
 
 interface VideoSupportersProps {
   onClose: () => void;
@@ -95,31 +95,31 @@ export const VideoSupporters: React.FC<VideoSupportersProps> = ({ onClose }) => 
   };
 
   return (
-    <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-2 sm:p-4" onClick={onClose}>
       <div
-        className="bg-gradient-to-br from-gray-900 to-black border border-white/20 rounded-xl max-w-5xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+        className="bg-gradient-to-br from-gray-900 to-black border border-white/20 rounded-xl max-w-5xl w-full max-h-[95vh] overflow-y-auto shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-white/10 sticky top-0 bg-black/90 backdrop-blur z-10">
-          <h2 className="text-2xl font-bold text-white">
+        <div className="flex items-center justify-between p-3 sm:p-4 border-b border-white/10 sticky top-0 bg-black/90 backdrop-blur z-10">
+          <h2 className="text-lg sm:text-2xl font-bold text-white">
             Featured Products
           </h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-full"
           >
-            <X className="w-6 h-6" />
+            <X className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
         </div>
 
         {/* Product Carousel */}
-        <div className="p-6">
+        <div className="p-3 sm:p-6">
           <div className="relative">
             {/* Main Product Display */}
             <div className="glass-panel rounded-xl overflow-hidden">
               {/* Product Image/Video */}
-              <div className="relative h-96 overflow-hidden bg-gray-800">
+              <div className="relative h-48 sm:h-64 md:h-80 lg:h-96 overflow-hidden bg-gray-800">
                 {showVideo ? (
                   <iframe
                     src={currentProduct.videoUrl}
@@ -141,8 +141,8 @@ export const VideoSupporters: React.FC<VideoSupportersProps> = ({ onClose }) => 
                       onClick={() => setShowVideo(true)}
                       className="absolute inset-0 flex items-center justify-center group"
                     >
-                      <div className="w-20 h-20 bg-blue-500/90 hover:bg-blue-600 rounded-full flex items-center justify-center transition-all group-hover:scale-110">
-                        <Play className="w-10 h-10 text-white ml-1" fill="white" />
+                      <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-blue-500/90 hover:bg-blue-600 rounded-full flex items-center justify-center transition-all group-hover:scale-110">
+                        <Play className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-white ml-1" fill="white" />
                       </div>
                     </button>
                   </>
@@ -150,30 +150,30 @@ export const VideoSupporters: React.FC<VideoSupportersProps> = ({ onClose }) => 
               </div>
 
               {/* Product Info */}
-              <div className="p-6">
-                <div className="flex items-start justify-between mb-4">
+              <div className="p-3 sm:p-4 md:p-6">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4 mb-4">
                   <div className="flex-1">
-                    <h3 className="text-white font-bold text-3xl mb-2">{currentProduct.name}</h3>
-                    <p className="text-gray-400 text-lg">{currentProduct.description}</p>
+                    <h3 className="text-white font-bold text-xl sm:text-2xl md:text-3xl mb-2">{currentProduct.name}</h3>
+                    <p className="text-gray-400 text-sm sm:text-base md:text-lg">{currentProduct.description}</p>
                   </div>
-                  <span className="text-4xl font-bold text-blue-400 ml-4">{currentProduct.price}</span>
+                  <span className="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-400 sm:ml-4">{currentProduct.price}</span>
                 </div>
 
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
                   <a
                     href={currentProduct.buyLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white rounded-lg transition-all font-semibold text-lg"
+                    className="flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white rounded-lg transition-all font-semibold text-sm sm:text-base md:text-lg"
                   >
-                    <ShoppingCart className="w-5 h-5" />
+                    <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
                     Buy Now
                   </a>
 
                   {showVideo && (
                     <button
                       onClick={() => setShowVideo(false)}
-                      className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-all font-semibold text-lg"
+                      className="px-4 sm:px-6 py-2.5 sm:py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-all font-semibold text-sm sm:text-base md:text-lg"
                     >
                       Show Image
                     </button>
@@ -185,20 +185,20 @@ export const VideoSupporters: React.FC<VideoSupportersProps> = ({ onClose }) => 
             {/* Navigation Arrows */}
             <button
               onClick={prevProduct}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 p-3 bg-blue-500/90 hover:bg-blue-600 text-white rounded-full shadow-lg transition-all"
+              className="absolute left-0 sm:left-2 top-1/2 -translate-y-1/2 -translate-x-2 sm:-translate-x-4 p-2 sm:p-3 bg-blue-500/90 hover:bg-blue-600 text-white rounded-full shadow-lg transition-all"
             >
-              <ChevronLeft className="w-6 h-6" />
+              <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
 
             <button
               onClick={nextProduct}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 p-3 bg-blue-500/90 hover:bg-blue-600 text-white rounded-full shadow-lg transition-all"
+              className="absolute right-0 sm:right-2 top-1/2 -translate-y-1/2 translate-x-2 sm:translate-x-4 p-2 sm:p-3 bg-blue-500/90 hover:bg-blue-600 text-white rounded-full shadow-lg transition-all"
             >
-              <ChevronRight className="w-6 h-6" />
+              <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
 
             {/* Product Indicators */}
-            <div className="flex items-center justify-center gap-2 mt-6">
+            <div className="flex items-center justify-center gap-1.5 sm:gap-2 mt-4 sm:mt-6">
               {PRODUCTS.map((_, index) => (
                 <button
                   key={index}
@@ -206,10 +206,10 @@ export const VideoSupporters: React.FC<VideoSupportersProps> = ({ onClose }) => 
                     setShowVideo(false);
                     setCurrentIndex(index);
                   }}
-                  className={`w-3 h-3 rounded-full transition-all ${
+                  className={`h-2 sm:h-3 rounded-full transition-all ${
                     index === currentIndex
-                      ? 'bg-blue-500 w-8'
-                      : 'bg-gray-600 hover:bg-gray-500'
+                      ? 'bg-blue-500 w-6 sm:w-8'
+                      : 'bg-gray-600 hover:bg-gray-500 w-2 sm:w-3'
                   }`}
                 />
               ))}
@@ -218,10 +218,10 @@ export const VideoSupporters: React.FC<VideoSupportersProps> = ({ onClose }) => 
         </div>
 
         {/* Close Button */}
-        <div className="p-4 border-t border-white/10 text-center">
+        <div className="p-3 sm:p-4 border-t border-white/10 text-center">
           <button
             onClick={onClose}
-            className="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+            className="px-4 sm:px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors text-sm sm:text-base w-full sm:w-auto"
           >
             Close
           </button>

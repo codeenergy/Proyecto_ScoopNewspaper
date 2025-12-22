@@ -52,59 +52,67 @@ export const Footer: React.FC<FooterProps> = ({ language }) => {
 
   return (
     <>
-      <footer className="relative z-20 glass-panel border-t border-white/10 py-2 px-4">
+      <footer className="relative z-20 glass-panel border-t border-white/10 py-3 px-4">
         <div className="max-w-7xl mx-auto">
 
-          {/* Compact Single Row Layout */}
-          <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
+          {/* Responsive Layout - Column on mobile, Row on desktop */}
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 text-xs">
 
-            {/* Left: Copyright */}
-            <div className="text-gray-400">
-              © {new Date().getFullYear()} {APP_NAME}
+            {/* Top Row on Mobile: Copyright & Links */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+              {/* Copyright */}
+              <div className="text-gray-400 text-center sm:text-left">
+                © {new Date().getFullYear()} {APP_NAME}
+              </div>
+
+              {/* Links */}
+              <div className="flex flex-wrap justify-center sm:justify-start gap-3 sm:gap-4">
+                <button onClick={() => openModal('about')} className="text-gray-400 hover:text-blue-400 transition-colors">
+                  {t.about}
+                </button>
+                <span className="text-gray-600 hidden sm:inline">|</span>
+                <button onClick={() => openModal('privacy')} className="text-gray-400 hover:text-blue-400 transition-colors">
+                  {t.privacy}
+                </button>
+                <button onClick={() => openModal('terms')} className="text-gray-400 hover:text-blue-400 transition-colors">
+                  {t.terms}
+                </button>
+                <button onClick={() => openModal('cookies')} className="text-gray-400 hover:text-blue-400 transition-colors">
+                  {t.cookies}
+                </button>
+              </div>
             </div>
 
-            {/* Center: Links */}
-            <div className="flex flex-wrap gap-4">
-              <button onClick={() => openModal('about')} className="text-gray-400 hover:text-blue-400 transition-colors">
-                {t.about}
-              </button>
-              <span className="text-gray-600">|</span>
-              <button onClick={() => openModal('privacy')} className="text-gray-400 hover:text-blue-400 transition-colors">
-                {t.privacy}
-              </button>
-              <button onClick={() => openModal('terms')} className="text-gray-400 hover:text-blue-400 transition-colors">
-                {t.terms}
-              </button>
-              <button onClick={() => openModal('cookies')} className="text-gray-400 hover:text-blue-400 transition-colors">
-                {t.cookies}
-              </button>
-            </div>
-
-            {/* Right: Support, Contact & Credits */}
-            <div className="flex items-center gap-4">
+            {/* Bottom Row on Mobile: Support, Contact & Credits */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+              {/* Support Button */}
               <a
-                href="https://otieu.com/4/10325584"
+                href="https://otieu.com/4/10363114"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-3 py-1.5 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 rounded-lg transition-all text-white text-xs font-semibold flex items-center gap-1"
+                className="px-3 py-1.5 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 rounded-lg transition-all text-white text-xs font-semibold flex items-center justify-center gap-1 w-full sm:w-auto"
               >
                 <Play className="w-3 h-3" />
                 Support
               </a>
-              <span className="text-gray-600">|</span>
+
+              {/* Contact Email */}
               <a
                 href="mailto:contact@scoopnewspaper.com"
-                className="text-gray-400 hover:text-blue-400 transition-colors flex items-center gap-1"
+                className="text-gray-400 hover:text-blue-400 transition-colors flex items-center justify-center sm:justify-start gap-1"
               >
-                <Mail className="w-4 h-4" />
-                <span className="text-xs">contact@scoopnewspaper.com</span>
+                <Mail className="w-4 h-4 flex-shrink-0" />
+                <span className="text-xs truncate max-w-[200px] sm:max-w-none">contact@scoopnewspaper.com</span>
               </a>
-              <span className="text-gray-600">|</span>
+
+              <span className="text-gray-600 hidden sm:inline">|</span>
+
+              {/* Credits */}
               <a
                 href="https://codeenergy.org"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-blue-400 transition-colors text-xs"
+                className="text-gray-400 hover:text-blue-400 transition-colors text-xs text-center sm:text-left"
               >
                 {t.developedBy} <span className="font-semibold text-blue-400">Code Energy</span>
               </a>
