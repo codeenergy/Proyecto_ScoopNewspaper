@@ -1,8 +1,8 @@
 import { Article, Category } from '../types';
 import { MOCK_ARTICLES } from '../constants';
 
-const GEMINI_API_KEY = 'AIzaSyDwDy3e_pHl4qoUcFu7kZCjdPX37BdLVcQ';
-const NEWSDATA_API_KEY = 'pub_31a1811a2f7543bf9c7103a819094a23';
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
+const NEWSDATA_API_KEY = import.meta.env.VITE_NEWSDATA_API_KEY || '';
 
 // Map language codes for NewsData.io
 const languageMap: Record<string, string> = {

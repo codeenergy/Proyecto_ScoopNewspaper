@@ -126,6 +126,18 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
             )}
 
+            {/* Support Direct Link */}
+            <a
+              href="https://otieu.com/4/10325584"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden md:flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 rounded-lg transition-all text-white text-sm font-semibold"
+              title="Direct Support Link"
+            >
+              <Play className="w-4 h-4" />
+              <span className="hidden lg:inline">Support</span>
+            </a>
+
             <button
               onClick={onRefresh}
               className="p-2 hover:bg-white/10 rounded-lg transition-colors"
@@ -308,6 +320,18 @@ export const Header: React.FC<HeaderProps> = ({
                   Video & Supporters
                 </button>
               )}
+
+              {/* Support Direct Link for Mobile */}
+              <a
+                href="https://otieu.com/4/10325584"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setShowMobileMenu(false)}
+                className="w-full px-4 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 rounded-lg transition-all text-white font-semibold flex items-center justify-center gap-2"
+              >
+                <Play className="w-4 h-4" />
+                Support Direct
+              </a>
 
               {/* Close Button */}
               <button

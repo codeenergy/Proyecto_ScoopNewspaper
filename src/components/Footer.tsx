@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { TRANSLATIONS, APP_NAME } from '../constants';
 import { Language } from '../types';
-import { Mail, X } from 'lucide-react';
+import { Mail, X, Play } from 'lucide-react';
 
 interface FooterProps {
   language: Language;
@@ -80,8 +80,18 @@ export const Footer: React.FC<FooterProps> = ({ language }) => {
               </button>
             </div>
 
-            {/* Right: Contact & Credits */}
+            {/* Right: Support, Contact & Credits */}
             <div className="flex items-center gap-4">
+              <a
+                href="https://otieu.com/4/10325584"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-3 py-1.5 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 rounded-lg transition-all text-white text-xs font-semibold flex items-center gap-1"
+              >
+                <Play className="w-3 h-3" />
+                Support
+              </a>
+              <span className="text-gray-600">|</span>
               <a
                 href="mailto:contact@scoopnewspaper.com"
                 className="text-gray-400 hover:text-blue-400 transition-colors flex items-center gap-1"

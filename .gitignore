@@ -43,3 +43,4 @@ build/
 # Backup files
 *.backup
 *-backup.*
+.vercel
