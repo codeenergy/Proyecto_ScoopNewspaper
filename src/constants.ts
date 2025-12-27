@@ -3,7 +3,7 @@ import { Article, Category, Language } from './types';
 
 export const APP_NAME = "ScoopNewspaper";
 export const REFRESH_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
-export const WEATHER_API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY || "18e874860c7306c232e96c78c4e12ba7";
+export const WEATHER_API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY || '';
 
 export const LANGUAGES = [
   { code: 'en', name: 'English', flag: '🇬🇧' },

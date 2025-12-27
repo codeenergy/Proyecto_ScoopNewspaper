@@ -25,7 +25,34 @@ El proyecto utiliza múltiples APIs integradas:
 *   **OpenWeather API:** Datos meteorológicos en la cabecera
 *   **Monetag Ads:** Sistema de monetización integrado
 
-> **Nota:** Todas las API keys están configuradas en `src/constants.ts` y `src/services/geminiService.ts`
+## 🔐 Configuración de Variables de Entorno
+
+Este proyecto utiliza variables de entorno para proteger las API keys. Sigue estos pasos:
+
+### 1. Crear archivo .env
+
+Copia el archivo `.env.example` y renómbralo a `.env`:
+
+```bash
+cp .env.example .env
+```
+
+### 2. Configurar tus API Keys
+
+Edita el archivo `.env` y añade tus propias API keys:
+
+```env
+# OpenWeather API Key (https://openweathermap.org/api)
+VITE_OPENWEATHER_API_KEY=tu_api_key_aqui
+
+# Google Gemini API Key (https://makersuite.google.com/app/apikey)
+VITE_GEMINI_API_KEY=tu_api_key_aqui
+
+# NewsData.io API Key (https://newsdata.io/)
+VITE_NEWSDATA_API_KEY=tu_api_key_aqui
+```
+
+> **Importante:** Nunca compartas tu archivo `.env` ni subas API keys al repositorio público.
 
 ## 🚀 Guía de Instalación y Ejecución
 
@@ -38,8 +65,11 @@ Abre tu terminal en la carpeta del proyecto y ejecuta:
 npm install
 ```
 
-### 2. Arrancar el Servidor de Desarrollo
-Una vez instaladas las librerías, inicia la aplicación:
+### 2. Configurar Variables de Entorno
+Asegúrate de haber creado tu archivo `.env` con las API keys (ver sección anterior).
+
+### 3. Arrancar el Servidor de Desarrollo
+Una vez instaladas las librerías y configuradas las variables de entorno, inicia la aplicación:
 
 ```bash
 npm run dev

@@ -27,6 +27,9 @@ export const Header: React.FC<HeaderProps> = ({
   setFilterState
 }) => {
   const [weather, setWeather] = useState<{ temp: number; condition: string } | null>(null);
+  const [weatherDetails, setWeatherDetails] = useState<any>(null);
+  const [forecast, setForecast] = useState<any[]>([]);
+  const [showWeatherModal, setShowWeatherModal] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [selectedBreakingNews, setSelectedBreakingNews] = useState<Article | null>(null);
   const [currentNewsIndex, setCurrentNewsIndex] = useState(0);
@@ -42,6 +45,8 @@ export const Header: React.FC<HeaderProps> = ({
 
   useEffect(() => {
     const city = t.weatherCity || 'London';
+
+    // Fetch current weather
     fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${WEATHER_API_KEY}`)
       .then(res => res.json())
       .then(data => {
@@ -50,9 +55,22 @@ export const Header: React.FC<HeaderProps> = ({
             temp: Math.round(data.main.temp),
             condition: data.weather[0].main
           });
+          setWeatherDetails(data);
         }
       })
       .catch(() => setWeather({ temp: 18, condition: 'Clear' }));
+
+    // Fetch 5-day forecast
+    fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&appid=${WEATHER_API_KEY}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.list) {
+          // Get one forecast per day (at 12:00)
+          const dailyForecast = data.list.filter((_: any, index: number) => index % 8 === 0).slice(0, 5);
+          setForecast(dailyForecast);
+        }
+      })
+      .catch(() => setForecast([]));
   }, [language]);
 
   const getCategoryIcon = (category: string) => {
@@ -109,10 +127,14 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Weather & Controls */}
           <div className="flex items-center gap-2">
             {weather && (
-              <div className="hidden sm:flex items-center gap-2 text-sm text-gray-300">
+              <button
+                onClick={() => setShowWeatherModal(true)}
+                className="hidden sm:flex items-center gap-2 text-sm text-gray-300 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all cursor-pointer"
+                title="View weather details"
+              >
                 <span>{getWeatherEmoji(weather.condition)}</span>
                 <span>{weather.temp}°C</span>
-              </div>
+              </button>
             )}
 
             {/* Video & Supporters Button */}
@@ -339,6 +361,137 @@ export const Header: React.FC<HeaderProps> = ({
                 className="w-full mt-4 px-4 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors font-semibold"
               >
                 {t.apply || 'Apply Filters'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Weather Details Modal */}
+      {showWeatherModal && weatherDetails && (
+        <div
+          className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
+          onClick={() => setShowWeatherModal(false)}
+        >
+          <div
+            className="bg-gradient-to-br from-blue-900 to-black border border-blue-500/50 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 border-b border-white/10 sticky top-0 bg-black/90 backdrop-blur z-10">
+              <div className="flex items-center gap-3">
+                <span className="text-4xl">{getWeatherEmoji(weatherDetails.weather[0].main)}</span>
+                <div>
+                  <h2 className="text-2xl font-bold text-white">{weatherDetails.name}</h2>
+                  <p className="text-sm text-gray-400">{weatherDetails.sys.country}</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowWeatherModal(false)}
+                className="text-gray-400 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-full"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Current Weather */}
+            <div className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                {/* Temperature Card */}
+                <div className="bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-lg p-6 border border-blue-500/30">
+                  <h3 className="text-sm text-gray-400 mb-2">Temperature</h3>
+                  <div className="flex items-end gap-2">
+                    <span className="text-6xl font-bold text-white">{Math.round(weatherDetails.main.temp)}°</span>
+                    <div className="pb-2 text-gray-300">
+                      <div className="text-xs">Feels like {Math.round(weatherDetails.main.feels_like)}°C</div>
+                      <div className="text-xs">Min {Math.round(weatherDetails.main.temp_min)}° / Max {Math.round(weatherDetails.main.temp_max)}°</div>
+                    </div>
+                  </div>
+                  <p className="text-lg text-blue-300 mt-2 capitalize">{weatherDetails.weather[0].description}</p>
+                </div>
+
+                {/* Details Grid */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-white/5 rounded-lg p-4 border border-white/10">
+                    <div className="text-sm text-gray-400 mb-1">Humidity</div>
+                    <div className="text-2xl font-bold text-white">💧 {weatherDetails.main.humidity}%</div>
+                  </div>
+                  <div className="bg-white/5 rounded-lg p-4 border border-white/10">
+                    <div className="text-sm text-gray-400 mb-1">Pressure</div>
+                    <div className="text-2xl font-bold text-white">🔽 {weatherDetails.main.pressure} hPa</div>
+                  </div>
+                  <div className="bg-white/5 rounded-lg p-4 border border-white/10">
+                    <div className="text-sm text-gray-400 mb-1">Wind Speed</div>
+                    <div className="text-2xl font-bold text-white">💨 {Math.round(weatherDetails.wind.speed * 3.6)} km/h</div>
+                  </div>
+                  <div className="bg-white/5 rounded-lg p-4 border border-white/10">
+                    <div className="text-sm text-gray-400 mb-1">Visibility</div>
+                    <div className="text-2xl font-bold text-white">👁️ {(weatherDetails.visibility / 1000).toFixed(1)} km</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 5-Day Forecast */}
+              {forecast.length > 0 && (
+                <div className="mt-6">
+                  <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                    📅 5-Day Forecast
+                  </h3>
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                    {forecast.map((day: any, index: number) => (
+                      <div
+                        key={index}
+                        className="bg-white/5 rounded-lg p-4 border border-white/10 text-center hover:bg-white/10 transition-colors"
+                      >
+                        <div className="text-sm text-gray-400 mb-2">
+                          {new Date(day.dt * 1000).toLocaleDateString(language, { weekday: 'short', month: 'short', day: 'numeric' })}
+                        </div>
+                        <div className="text-3xl mb-2">{getWeatherEmoji(day.weather[0].main)}</div>
+                        <div className="text-lg font-bold text-white">{Math.round(day.main.temp)}°C</div>
+                        <div className="text-xs text-gray-400 capitalize mt-1">{day.weather[0].description}</div>
+                        <div className="text-xs text-blue-300 mt-2">💧 {day.main.humidity}%</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Additional Info */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+                <div className="bg-white/5 rounded-lg p-3 border border-white/10">
+                  <div className="text-xs text-gray-400">Sunrise</div>
+                  <div className="text-sm font-semibold text-yellow-400">
+                    🌅 {new Date(weatherDetails.sys.sunrise * 1000).toLocaleTimeString(language, { hour: '2-digit', minute: '2-digit' })}
+                  </div>
+                </div>
+                <div className="bg-white/5 rounded-lg p-3 border border-white/10">
+                  <div className="text-xs text-gray-400">Sunset</div>
+                  <div className="text-sm font-semibold text-orange-400">
+                    🌇 {new Date(weatherDetails.sys.sunset * 1000).toLocaleTimeString(language, { hour: '2-digit', minute: '2-digit' })}
+                  </div>
+                </div>
+                {weatherDetails.clouds && (
+                  <div className="bg-white/5 rounded-lg p-3 border border-white/10">
+                    <div className="text-xs text-gray-400">Cloudiness</div>
+                    <div className="text-sm font-semibold text-white">☁️ {weatherDetails.clouds.all}%</div>
+                  </div>
+                )}
+                {weatherDetails.wind?.deg !== undefined && (
+                  <div className="bg-white/5 rounded-lg p-3 border border-white/10">
+                    <div className="text-xs text-gray-400">Wind Direction</div>
+                    <div className="text-sm font-semibold text-white">🧭 {weatherDetails.wind.deg}°</div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Close Button */}
+            <div className="p-4 border-t border-white/10 text-center">
+              <button
+                onClick={() => setShowWeatherModal(false)}
+                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+              >
+                Close
               </button>
             </div>
           </div>
